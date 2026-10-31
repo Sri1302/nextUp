@@ -26,7 +26,7 @@ Push this folder to a new GitHub repository (`.env*`, `data/` and `node_modules`
 ### 3. Vercel
 1. [vercel.com](https://vercel.com) → **Add New Project** → import the repo.
 2. Add environment variables (see `.env.example`): `DATABASE_URL`, `APP_URL` (e.g. `https://nextup.vercel.app` or your own domain), and the Google/Instagram keys below.
-3. Deploy. The `vercel-build` script runs database migrations before building.
+3. Deploy. The app runs in Singapore (`sin1`, set in `vercel.json`) to sit next to the Neon database. Create the Neon project in **AWS Asia Pacific (Singapore)**. The `vercel-build` script runs database migrations before building.
 4. Optional: add the demo creator to production with `DATABASE_URL=... npm run db:seed`.
 
 ### 4. Google sign-in (YouTube creators + all fans)
