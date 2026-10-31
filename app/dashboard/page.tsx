@@ -6,7 +6,7 @@ import * as data from "@/lib/data";
 import { getCurrentUser } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
 import Avatar from "@/components/Avatar";
-import { Followers, PlatformBadge } from "@/components/Bits";
+import { CategoryTags, Followers, PlatformBadge } from "@/components/Bits";
 import ItemEditor from "@/components/ItemEditor";
 import ItemFields from "@/components/ItemFields";
 import ProfileForm from "@/components/ProfileForm";
@@ -62,11 +62,18 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
               <span className="muted">@{me.handle}</span>
               <PlatformBadge platform={me.platform} />
               <Followers count={me.followerCount} platform={me.platform} />
+              <CategoryTags categories={me.categories} />
             </div>
           </div>
         </div>
         <ShareBar url={shareUrl} path={`/@${me.handle}`} />
       </section>
+
+      {me.categories.length === 0 && (
+        <p className="banner">
+          🏷️ <strong>Pick your categories</strong> (Tech, Food, Travel…) under Edit profile so fans can find you on Explore.
+        </p>
+      )}
 
       <div className="stats">
         <div className="stat">
@@ -130,7 +137,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </section>
       )}
 
-      <details className="card" open={!!welcome}>
+      <details className="card" open={!!welcome || me.categories.length === 0}>
         <summary>Edit profile</summary>
         <ProfileForm creator={me} />
       </details>

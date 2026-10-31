@@ -1,5 +1,5 @@
 import type { Platform, Status } from "@/lib/types";
-import { STATUS_LABEL } from "@/lib/types";
+import { CATEGORIES, STATUS_LABEL, isCategory } from "@/lib/types";
 import { compactNumber } from "@/lib/format";
 import { InstagramIcon, YouTubeIcon } from "./BrandIcons";
 
@@ -14,6 +14,20 @@ export function PlatformBadge({ platform }: { platform: Platform }) {
 
 export function StatusPill({ status }: { status: Status }) {
   return <span className={`pill ${status}`}>{STATUS_LABEL[status]}</span>;
+}
+
+export function CategoryTags({ categories }: { categories: string[] }) {
+  const known = categories.filter(isCategory);
+  if (!known.length) return null;
+  return (
+    <span className="tags">
+      {known.map((c) => (
+        <span key={c} className="tag">
+          {CATEGORIES[c].emoji} {CATEGORIES[c].label}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 export function Followers({ count, platform }: { count: number | null; platform: Platform }) {

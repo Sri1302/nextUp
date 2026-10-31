@@ -1,7 +1,7 @@
 import { and, desc, eq, getTableColumns, ilike, inArray, ne, or, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { accounts, creators, items, users, votes } from "./db/schema";
-import type { Creator, Item, ItemWithVotes, Platform, Provider } from "./types";
+import type { Category, Creator, Item, ItemWithVotes, Platform, Provider } from "./types";
 
 // ---- handles ----
 
@@ -98,11 +98,12 @@ export async function getCreatorByHandle(handle: string): Promise<Creator | unde
 
 export type CreatorListing = Pick<
   Creator,
-  "id" | "handle" | "name" | "platform" | "avatarUrl" | "followerCount" | "bio"
+  "id" | "handle" | "name" | "platform" | "avatarUrl" | "followerCount" | "bio" | "categories"
 > & { itemCount: number; voteCount: number };
 
-// Creators with something on their timeline, most-voted first. Optional search by name or handle.
-export async function listCreators(search = "", limit = 48): Promise<CreatorListing[]> {
+// Creators with something on their timeline, most-voted first. Optional search by name or handle,
+// and an optional category filter.
+export async function listCreators(search = "", category?: Category, limit = 48): Promise<CreatorListing[]> {
   const db = await getDb();
   const q = search.trim().slice(0, 60).replace(/[\\%_]/g, (c) => `\\${c}`);
   const voteCount = sql<number>`count(${votes.userId})::int`;
@@ -115,13 +116,19 @@ export async function listCreators(search = "", limit = 48): Promise<CreatorList
       avatarUrl: creators.avatarUrl,
       followerCount: creators.followerCount,
       bio: creators.bio,
+      categories: creators.categories,
       itemCount: sql<number>`count(distinct ${items.id})::int`,
       voteCount,
     })
     .from(creators)
     .innerJoin(items, eq(items.creatorId, creators.id))
     .leftJoin(votes, eq(votes.itemId, items.id))
-    .where(q ? or(ilike(creators.name, `%${q}%`), ilike(creators.handle, `%${q}%`)) : undefined)
+    .where(
+      and(
+        q ? or(ilike(creators.name, `%${q}%`), ilike(creators.handle, `%${q}%`)) : undefined,
+        category ? sql`${category} = any(${creators.categories})` : undefined,
+      ),
+    )
     .groupBy(creators.id)
     .orderBy(desc(voteCount), desc(creators.createdAt))
     .limit(limit);
@@ -140,6 +147,7 @@ export type CreatorProfile = {
   channelUrl: string;
   avatarUrl: string;
   followerCount: number | null;
+  categories: Category[];
 };
 
 // Creates the creator profile on first sign-in, or refreshes the platform data on later ones.
@@ -153,6 +161,7 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
         avatarUrl: p.avatarUrl || current.avatarUrl,
         followerCount: p.followerCount ?? current.followerCount,
         channelUrl: current.channelUrl || p.channelUrl,
+        categories: current.categories.length ? current.categories : p.categories,
       })
       .where(eq(creators.id, current.id));
     return { creator: current, isNew: false };
@@ -170,6 +179,7 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
         channelUrl: p.channelUrl,
         avatarUrl: p.avatarUrl,
         followerCount: p.followerCount,
+        categories: p.categories,
       })
       .onConflictDoNothing()
       .returning();
@@ -182,7 +192,7 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
 
 export async function updateCreator(
   creatorId: string,
-  patch: Pick<Creator, "handle" | "name" | "platform" | "channelUrl" | "bio">,
+  patch: Pick<Creator, "handle" | "name" | "platform" | "channelUrl" | "bio" | "categories">,
 ) {
   const err = handleError(patch.handle);
   if (err) return err;

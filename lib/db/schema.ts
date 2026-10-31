@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { index, integer, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { PLATFORMS, PROVIDERS, STATUSES } from "../types";
 
@@ -55,6 +56,7 @@ export const creators = pgTable("creators", {
   bio: text("bio").notNull().default(""),
   avatarUrl: text("avatar_url").notNull().default(""),
   followerCount: integer("follower_count"),
+  categories: text("categories").array().notNull().default(sql`'{}'::text[]`), // keys of CATEGORIES
   createdAt: createdAt(),
 });
 

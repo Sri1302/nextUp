@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { deleteAccount, updateProfile } from "@/app/actions";
 import type { Creator } from "@/lib/types";
+import CategoryPicker from "./CategoryPicker";
 import SubmitButton from "./SubmitButton";
 
 export default function ProfileForm({ creator }: { creator: Creator }) {
@@ -26,6 +27,7 @@ export default function ProfileForm({ creator }: { creator: Creator }) {
           <span>Bio (shown on your public page)</span>
           <textarea name="bio" rows={2} maxLength={280} defaultValue={creator.bio} />
         </label>
+        <CategoryPicker initial={creator.categories} />
         <div className="row wrap">
           <label className="field grow">
             <span>Main platform</span>

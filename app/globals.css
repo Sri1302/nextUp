@@ -431,3 +431,22 @@ details.card[open] summary { margin-bottom: 18px; }
   .nav-inner { padding: 0 16px; }
   .hide-sm { display: none; }
 }
+
+/* ---------- categories ---------- */
+
+.tags { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.tag { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 0.76rem; font-weight: 500; color: var(--muted); background: var(--surface-2); border: 1px solid var(--border); }
+.profile-body .tags { justify-content: center; }
+.creator-card .tags { margin-top: 8px; }
+
+.chip.cat input:checked + span { background: var(--text); color: var(--bg); }
+.chip.dim span { opacity: 0.4; }
+
+.filter-row { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 4px; margin: 0 -2px; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent); mask-image: linear-gradient(90deg, #000 92%, transparent); }
+.filter-row::-webkit-scrollbar { display: none; }
+.filter {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 0.88rem; font-weight: 500; white-space: nowrap; transition: all 0.15s;
+}
+.filter:hover { text-decoration: none; border-color: var(--subtle); }
+.filter.on { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }

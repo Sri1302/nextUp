@@ -26,6 +26,7 @@ export async function seedDemo(db: DB) {
       channelUrl: "https://www.youtube.com/",
       bio: "Budget travel, street food and slow adventures. Help me pick where I go next!",
       followerCount: 128400,
+      categories: ["travel", "food"],
     })
     .returning({ id: creators.id });
 

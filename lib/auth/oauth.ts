@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { env } from "../env";
+import { categoriesFromYouTubeTopics } from "../categories";
 import type { CreatorProfile, OAuthIdentity } from "../data";
 import type { Provider } from "../types";
 
@@ -111,12 +112,13 @@ async function google(o: { origin: string; code: string; verifier: string; inten
     channelUrl: "",
     avatarUrl: me.picture ?? "",
     followerCount: null,
+    categories: [],
   };
 
   if (o.intent === "creator") {
     // The user may untick the YouTube permission; fall back to the Google profile then.
     try {
-      const res = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true", {
+      const res = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&mine=true", {
         headers: auth,
       });
       if (res.ok) {
@@ -125,6 +127,7 @@ async function google(o: { origin: string; code: string; verifier: string; inten
             id: string;
             snippet: { title: string; customUrl?: string; thumbnails?: { medium?: { url: string }; default?: { url: string } } };
             statistics?: { subscriberCount?: string; hiddenSubscriberCount?: boolean };
+            topicDetails?: { topicCategories?: string[] };
           }[];
         };
         const ch = data.items?.[0];
@@ -137,6 +140,7 @@ async function google(o: { origin: string; code: string; verifier: string; inten
           creator.avatarUrl = ch.snippet.thumbnails?.medium?.url ?? ch.snippet.thumbnails?.default?.url ?? creator.avatarUrl;
           const subs = Number(ch.statistics?.subscriberCount);
           creator.followerCount = ch.statistics?.hiddenSubscriberCount || !Number.isFinite(subs) ? null : subs;
+          creator.categories = categoriesFromYouTubeTopics(ch.topicDetails?.topicCategories);
         }
       }
     } catch (err) {
@@ -195,6 +199,7 @@ async function instagram(o: { origin: string; code: string }): Promise<OAuthResu
       channelUrl: `https://www.instagram.com/${me.username}/`,
       avatarUrl: me.profile_picture_url ?? "",
       followerCount: me.followers_count ?? null,
+      categories: [], // Instagram doesn't expose a niche; creators pick it themselves
     },
   };
 }

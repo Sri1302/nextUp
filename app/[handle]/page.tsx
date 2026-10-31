@@ -6,7 +6,7 @@ import * as data from "@/lib/data";
 import { getCurrentUser } from "@/lib/auth/session";
 import { voteLoginHref } from "@/lib/format";
 import Avatar from "@/components/Avatar";
-import { Followers, PlatformBadge } from "@/components/Bits";
+import { CategoryTags, Followers, PlatformBadge } from "@/components/Bits";
 import PublicTimeline from "@/components/PublicTimeline";
 import SiteNav from "@/components/SiteNav";
 
@@ -82,6 +82,7 @@ export default async function CreatorPage({ params }: Props) {
               <PlatformBadge platform={creator.platform} />
               <Followers count={creator.followerCount} platform={creator.platform} />
             </div>
+            <CategoryTags categories={creator.categories} />
             {creator.bio && <p className="bio">{creator.bio}</p>}
             <div className="profile-actions">
               {!viewer && items.some((i) => i.status !== "done") && (

@@ -3,7 +3,8 @@ import { signOut } from "@/app/actions";
 import * as data from "@/lib/data";
 import { getCurrentUser } from "@/lib/auth/session";
 import Avatar from "@/components/Avatar";
-import { Followers, PlatformBadge } from "@/components/Bits";
+import { CategoryTags, Followers, PlatformBadge } from "@/components/Bits";
+import { CATEGORIES, CATEGORY_KEYS, isCategory, type Category } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 
 export const dynamic = "force-dynamic";
@@ -12,11 +13,19 @@ export const metadata = {
   description: "Find YouTube and Instagram creators and vote on what they make next.",
 };
 
-export default async function Explore({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { q = "" } = await searchParams;
+export default async function Explore({ searchParams }: { searchParams: Promise<{ q?: string; cat?: string }> }) {
+  const { q = "", cat: rawCat } = await searchParams;
+  const cat = isCategory(rawCat) ? rawCat : undefined;
   const viewer = await getCurrentUser();
   const creator = viewer && (await data.getCreatorByUserId(viewer.id));
-  const list = await data.listCreators(q);
+  const list = await data.listCreators(q, cat);
+  const href = (c?: Category) => {
+    const p = new URLSearchParams();
+    if (q) p.set("q", q);
+    if (c) p.set("cat", c);
+    const s = p.toString();
+    return s ? `/explore?${s}` : "/explore";
+  };
 
   return (
     <>
@@ -49,16 +58,27 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
+            {cat && <input type="hidden" name="cat" value={cat} />}
             <input name="q" defaultValue={q} placeholder="Search by name or @handle" aria-label="Search creators" />
             <button className="btn primary">Search</button>
           </form>
+          <nav className="filter-row" aria-label="Filter by category">
+            <Link href={href()} className={`filter ${!cat ? "on" : ""}`}>
+              All
+            </Link>
+            {CATEGORY_KEYS.map((c) => (
+              <Link key={c} href={href(c)} className={`filter ${cat === c ? "on" : ""}`}>
+                {CATEGORIES[c].emoji} {CATEGORIES[c].label}
+              </Link>
+            ))}
+          </nav>
         </header>
 
         {list.length === 0 ? (
           <p className="empty">
-            {q ? (
+            {q || cat ? (
               <>
-                No creators match "{q}". <Link href="/explore">Show all</Link>
+                No creators match{q ? ` "${q}"` : ""}{cat ? ` in ${CATEGORIES[cat].label}` : ""}. <Link href="/explore">Show all</Link>
               </>
             ) : (
               "No creators yet. Check back soon!"
@@ -76,6 +96,7 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
                       <span className="muted small">@{c.handle}</span>
                       <PlatformBadge platform={c.platform} />
                     </div>
+                    <CategoryTags categories={c.categories} />
                     {c.bio && <p className="muted small clamp">{c.bio}</p>}
                     <div className="creator-meta">
                       <Followers count={c.followerCount} platform={c.platform} />
