@@ -50,7 +50,8 @@ Push this folder to a new GitHub repository (`.env*`, `data/` and `node_modules`
 Only **Business or Creator** Instagram accounts can use Instagram login. Personal accounts can switch for free in the Instagram app.
 
 ## Before launch checklist
-- [ ] Put a real contact email in `app/privacy/page.tsx`, and have the privacy policy and terms reviewed
+- [x] Contact email on the privacy page
+- [ ] Have the privacy policy and terms reviewed
 - [ ] Google OAuth app verified · Meta App Review approved
 - [ ] Custom domain on Vercel, and `APP_URL` + OAuth redirect URIs updated to it
 - [ ] Neon: enable point-in-time restore / backups on a paid plan when you have real users

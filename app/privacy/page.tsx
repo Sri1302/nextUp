@@ -43,11 +43,13 @@ export default function Privacy() {
       <h2>Deleting your data</h2>
       <p>
         Creators can delete their account from the dashboard (Edit profile → Delete account). This permanently removes
-        the profile, timeline and votes. Fans, or anyone who wants their data removed, can contact us and we'll delete it.
+        the profile, timeline and votes. Fans, or anyone who wants their data removed, can email us (below) and we'll delete it.
       </p>
 
       <h2>Contact</h2>
-      <p>Questions or deletion requests: add your contact email here before launch.</p>
+      <p>
+        Questions or deletion requests: <a href="mailto:chennusri22@gmail.com">chennusri22@gmail.com</a>
+      </p>
     </main>
     </>
   );
