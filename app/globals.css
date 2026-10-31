@@ -235,3 +235,33 @@ a.vote:hover { text-decoration: none; }
 
 .prose h2 { margin-top: 12px; }
 .prose ul { padding-left: 20px; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+
+/* ---- role picker ---- */
+
+.roles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.role-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left;
+  padding: 18px 16px; border-radius: var(--radius); border: 1.5px solid var(--border);
+  background: var(--bg); color: var(--muted); font: inherit; font-size: 0.88rem; cursor: pointer;
+  transition: border-color 0.15s, transform 0.05s;
+}
+.role-card:hover { border-color: var(--accent); }
+.role-card:active { transform: scale(0.98); }
+.role-card strong { color: var(--text); font-size: 1.05rem; }
+.role-emoji { font-size: 1.8rem; line-height: 1; }
+.linklike.back { align-self: flex-start; font-size: 0.9rem; }
+
+/* ---- explore ---- */
+
+.search { display: flex; gap: 8px; }
+.search input { flex: 1; }
+.creator-grid { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.creator-card { display: flex; gap: 14px; align-items: flex-start; color: var(--text); height: 100%; transition: border-color 0.15s; }
+.creator-card:hover { text-decoration: none; border-color: var(--accent); }
+.creator-card h3 { margin: 0 0 2px; }
+.creator-meta { margin-top: 6px; }
+.clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+@media (max-width: 480px) {
+  .roles { grid-template-columns: 1fr; }
+}

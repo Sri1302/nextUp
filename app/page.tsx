@@ -22,11 +22,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     <main className="page landing">
       <nav className="topbar">
         <span className="logo">NextUp</span>
-        {creator && (
-          <Link href="/dashboard" className="btn small">
-            Dashboard
+        <div className="row gap-sm">
+          <Link href="/explore" className="btn small ghost">
+            Explore
           </Link>
-        )}
+          {creator && (
+            <Link href="/dashboard" className="btn small">
+              Dashboard
+            </Link>
+          )}
+        </div>
       </nav>
 
       <section className="hero">
@@ -52,6 +57,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
             <Link href="/dashboard" className="btn primary">
               Go to your dashboard
             </Link>
+          </div>
+        ) : user ? (
+          <div className="stack">
+            <h2>Welcome back, {user.name.split(" ")[0] || "there"}</h2>
+            <Link href="/explore" className="btn primary">
+              Explore creators and vote
+            </Link>
+            <a href="/auth/google?intent=creator" className="btn ghost">
+              🎬 I'm a creator too: start my timeline
+            </a>
           </div>
         ) : (
           <SignInButtons />

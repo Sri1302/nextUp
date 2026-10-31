@@ -1,4 +1,4 @@
-import { and, eq, getTableColumns, inArray, ne, sql } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, ilike, inArray, ne, or, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { accounts, creators, items, users, votes } from "./db/schema";
 import type { Creator, Item, ItemWithVotes, Platform, Provider } from "./types";
@@ -6,7 +6,7 @@ import type { Creator, Item, ItemWithVotes, Platform, Provider } from "./types";
 // ---- handles ----
 
 const RESERVED = new Set([
-  "admin", "api", "app", "auth", "dashboard", "demo", "help", "login", "logout",
+  "admin", "api", "app", "auth", "dashboard", "demo", "explore", "help", "login", "logout",
   "nextup", "privacy", "settings", "signin", "signup", "support", "terms", "www",
 ]);
 
@@ -94,6 +94,37 @@ export async function getCreatorByHandle(handle: string): Promise<Creator | unde
   const db = await getDb();
   const [row] = await db.select().from(creators).where(eq(creators.handle, normalizeHandle(handle))).limit(1);
   return row;
+}
+
+export type CreatorListing = Pick<
+  Creator,
+  "id" | "handle" | "name" | "platform" | "avatarUrl" | "followerCount" | "bio"
+> & { itemCount: number; voteCount: number };
+
+// Creators with something on their timeline, most-voted first. Optional search by name or handle.
+export async function listCreators(search = "", limit = 48): Promise<CreatorListing[]> {
+  const db = await getDb();
+  const q = search.trim().slice(0, 60).replace(/[\\%_]/g, (c) => `\\${c}`);
+  const voteCount = sql<number>`count(${votes.userId})::int`;
+  return db
+    .select({
+      id: creators.id,
+      handle: creators.handle,
+      name: creators.name,
+      platform: creators.platform,
+      avatarUrl: creators.avatarUrl,
+      followerCount: creators.followerCount,
+      bio: creators.bio,
+      itemCount: sql<number>`count(distinct ${items.id})::int`,
+      voteCount,
+    })
+    .from(creators)
+    .innerJoin(items, eq(items.creatorId, creators.id))
+    .leftJoin(votes, eq(votes.itemId, items.id))
+    .where(q ? or(ilike(creators.name, `%${q}%`), ilike(creators.handle, `%${q}%`)) : undefined)
+    .groupBy(creators.id)
+    .orderBy(desc(voteCount), desc(creators.createdAt))
+    .limit(limit);
 }
 
 export async function getCreatorByUserId(userId: string): Promise<Creator | undefined> {

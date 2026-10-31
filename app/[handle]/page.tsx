@@ -86,7 +86,7 @@ export default async function CreatorPage({ params }: Props) {
       <PublicTimeline items={items} platform={creator.platform} loginHref={viewer ? null : voteLoginHref(path)} />
 
       <footer className="made-with">
-        <Link href="/">Made with NextUp: create your own timeline</Link>
+        <Link href="/explore">Explore more creators</Link> · <Link href="/">Made with NextUp</Link>
       </footer>
     </main>
   );
