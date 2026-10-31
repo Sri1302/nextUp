@@ -16,9 +16,9 @@ const MESSAGES: Record<string, string> = {
 };
 
 const PREVIEW = [
-  { title: "Sunday league to semi-pro: can I make the trial?", status: "Idea", cls: "idea", votes: 82, on: true },
-  { title: "Learning the knuckleball free kick in 30 days", status: "In progress", cls: "in_progress", votes: 74, on: false },
-  { title: "Pro footballer's full day of eating", status: "Planned", cls: "planned", votes: 63, on: false },
+  { title: "Solo trip to Iceland in winter", status: "Planned", cls: "planned", votes: 57, on: true },
+  { title: "Japan on $50 a day", status: "In progress", cls: "in_progress", votes: 48, on: false },
+  { title: "My full travel camera kit", status: "Idea", cls: "idea", votes: 22, on: false },
 ];
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -90,10 +90,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
             <div className="preview-body">
               <div className="preview-head">
                 <div className="avatar" style={{ width: 40, height: 40, fontSize: 17, background: "var(--grad)" }}>
-                  S
+                  M
                 </div>
                 <div className="grow">
-                  <h3>Striker Sessions</h3>
+                  <h3>Maya Travels</h3>
                   <span className="muted small">What should I make next?</span>
                 </div>
                 <PlatformBadge platform="youtube" />
