@@ -8,7 +8,7 @@ const isDev = process.env.NODE_ENV === "development";
 type Role = "creator" | "fan";
 
 // "I'm a creator" / "I'm a fan" picker, then the sign-in options for that role.
-export default function SignInButtons() {
+export default function SignInButtons({ instagram }: { instagram: boolean }) {
   const [role, setRole] = useState<Role | null>(null);
 
   if (!role) {
@@ -47,14 +47,18 @@ export default function SignInButtons() {
             Continue with YouTube
             <span className="oauth-arrow" aria-hidden>→</span>
           </a>
-          <a href="/auth/instagram?intent=creator" className="btn oauth">
-            <span className="oauth-logo"><InstagramIcon size={26} /></span>
-            Continue with Instagram
-            <span className="oauth-arrow" aria-hidden>→</span>
-          </a>
+          {instagram && (
+            <a href="/auth/instagram?intent=creator" className="btn oauth">
+              <span className="oauth-logo"><InstagramIcon size={26} /></span>
+              Continue with Instagram
+              <span className="oauth-arrow" aria-hidden>→</span>
+            </a>
+          )}
           <p className="muted small">
-            YouTube uses your Google account. Instagram needs a Business or Creator account. We only read your public
-            profile and never post for you.
+            {instagram
+              ? "YouTube uses your Google account. Instagram needs a Business or Creator account. "
+              : "YouTube uses your Google account. Instagram sign-in is coming soon. "}
+            We only read your public profile and never post for you.
           </p>
           {isDev && (
             <p className="dev-note">

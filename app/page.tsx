@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCreatorByUserId } from "@/lib/data";
 import SignInButtons from "@/components/SignInButtons";
+import { isConfigured } from "@/lib/auth/oauth";
 import SiteNav from "@/components/SiteNav";
 import { PlatformBadge } from "@/components/Bits";
 
@@ -74,7 +75,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
               </a>
             </div>
           ) : (
-            <SignInButtons />
+            <SignInButtons instagram={isConfigured("instagram") || process.env.NODE_ENV === "development"} />
           )}
         </section>
 
