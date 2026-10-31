@@ -450,3 +450,16 @@ details.card[open] summary { margin-bottom: 18px; }
 }
 .filter:hover { text-decoration: none; border-color: var(--subtle); }
 .filter.on { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+
+/* ---------- live creator counter ---------- */
+
+.live-pill {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; margin-right: 4px; border-radius: 999px;
+  font-size: 0.82rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border-strong); white-space: nowrap;
+}
+.live-pill:hover { text-decoration: none; border-color: var(--subtle); }
+.live-pill strong { color: var(--text); font-variant-numeric: tabular-nums; }
+.live-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+.live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #22c55e; animation: live-ping 1.8s ease-out infinite; }
+@keyframes live-ping { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(2.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .live-dot::after { animation: none; } }

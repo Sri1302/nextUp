@@ -134,6 +134,16 @@ export async function listCreators(search = "", category?: Category, limit = 48)
     .limit(limit);
 }
 
+// Real creators on NextUp (the seeded @demo page doesn't count).
+export async function countCreators() {
+  const db = await getDb();
+  const [{ n }] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(creators)
+    .where(ne(creators.handle, "demo"));
+  return n;
+}
+
 export async function getCreatorByUserId(userId: string): Promise<Creator | undefined> {
   const db = await getDb();
   const [row] = await db.select().from(creators).where(eq(creators.userId, userId)).limit(1);

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getCreatorByUserId } from "@/lib/data";
+import { countCreators, getCreatorByUserId } from "@/lib/data";
 import SignInButtons from "@/components/SignInButtons";
 import { isConfigured } from "@/lib/auth/oauth";
 import SiteNav from "@/components/SiteNav";
@@ -26,10 +26,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   const user = await getCurrentUser();
   const creator = user && (await getCreatorByUserId(user.id));
   const error = q.error && (MESSAGES[q.error] ?? MESSAGES.signin_failed);
+  const liveCount = await countCreators();
 
   return (
     <>
       <SiteNav>
+        {liveCount > 0 && (
+          <Link href="/explore" className="live-pill" title="Creators with a NextUp timeline">
+            <span className="live-dot" aria-hidden />
+            <strong>{liveCount.toLocaleString("en")}</strong>
+            <span className="hide-sm">{liveCount === 1 ? "creator" : "creators"}</span> live
+          </Link>
+        )}
         <Link href="/explore" className="btn ghost small">
           Explore
         </Link>
