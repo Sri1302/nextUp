@@ -54,19 +54,21 @@ function TopView({ items, platform, loginHref }: ViewProps) {
   const done = items.filter((i) => i.status === "done");
   return (
     <>
-      <p className="hint">{loginHref ? "Sign in with Google, then tap ▲ on what you want to see next." : "Tap ▲ on what you want to see next."}</p>
+      <p className="hint">Tap ▲ on what you want to see next.</p>
       <ol className="list">
         {open.map((item, idx) => (
-          <li key={item.id} className="card item">
+          <li key={item.id} className={`card item ${idx === 0 && item.votes > 0 ? "top" : ""}`}>
             <div className="rank">#{idx + 1}</div>
-            <ItemBody item={item} platform={platform} />
+            <ItemBody item={item} platform={platform} top={idx === 0 && item.votes > 0} />
             <VoteButton itemId={item.id} votes={item.votes} voted={item.voted} loginHref={loginHref} />
           </li>
         ))}
       </ol>
       {done.length > 0 && (
         <>
-          <h2 className="section-title">You asked, it's out ✓</h2>
+          <h2 className="section-title">
+            You asked, it's out <span className="count-chip">{done.length}</span>
+          </h2>
           <ul className="list">
             {done.map((item) => (
               <li key={item.id} className="card item done">
@@ -126,10 +128,11 @@ function TimelineView({ items, platform, loginHref }: ViewProps) {
   );
 }
 
-function ItemBody({ item, platform }: { item: ItemWithVotes; platform: Platform }) {
+function ItemBody({ item, platform, top }: { item: ItemWithVotes; platform: Platform; top?: boolean }) {
   return (
     <div className="grow">
       <StatusPill status={item.status} />
+      {top && <span className="top-label">🔥 Most wanted</span>}
       <h3>{item.title}</h3>
       {item.description && <p className="muted">{item.description}</p>}
       {item.status === "done" && item.doneUrl && (

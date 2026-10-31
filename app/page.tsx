@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCreatorByUserId } from "@/lib/data";
 import SignInButtons from "@/components/SignInButtons";
+import SiteNav from "@/components/SiteNav";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,12 @@ const MESSAGES: Record<string, string> = {
   not_configured: "This sign-in option isn't set up yet.",
 };
 
+const PREVIEW = [
+  { title: "Solo trip to Iceland in winter", status: "Planned", cls: "planned", votes: 57, on: true },
+  { title: "Japan on $50 a day", status: "In progress", cls: "in_progress", votes: 48, on: false },
+  { title: "My full travel camera kit", status: "Idea", cls: "idea", votes: 22, on: false },
+];
+
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const q = await searchParams;
   const user = await getCurrentUser();
@@ -19,85 +26,122 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   const error = q.error && (MESSAGES[q.error] ?? MESSAGES.signin_failed);
 
   return (
-    <main className="page landing">
-      <nav className="topbar">
-        <span className="logo">NextUp</span>
-        <div className="row gap-sm">
-          <Link href="/explore" className="btn small ghost">
-            Explore
-          </Link>
-          {creator && (
-            <Link href="/dashboard" className="btn small">
-              Dashboard
-            </Link>
-          )}
-        </div>
-      </nav>
-
-      <section className="hero">
-        <h1>
-          Let your fans vote on <span className="grad">what you make next.</span>
-        </h1>
-        <p className="lead">
-          Share your future content timeline with your YouTube and Instagram audience. They upvote, and you make what
-          they actually want to watch.
-        </p>
-        <Link href="/@demo" className="btn ghost">
-          See a demo timeline →
+    <>
+      <SiteNav>
+        <Link href="/explore" className="btn ghost small">
+          Explore
         </Link>
-      </section>
-
-      {error && <p className="banner error-banner">{error}</p>}
-      {q.deleted && <p className="banner">Your account has been deleted.</p>}
-
-      <section className="card signin">
-        {creator ? (
-          <div className="stack">
-            <h2>Welcome back, {creator.name}</h2>
-            <Link href="/dashboard" className="btn primary">
-              Go to your dashboard
-            </Link>
-          </div>
-        ) : user ? (
-          <div className="stack">
-            <h2>Welcome back, {user.name.split(" ")[0] || "there"}</h2>
-            <Link href="/explore" className="btn primary">
-              Explore creators and vote
-            </Link>
-            <a href="/auth/google?intent=creator" className="btn ghost">
-              🎬 I'm a creator too: start my timeline
-            </a>
-          </div>
-        ) : (
-          <SignInButtons />
+        {creator && (
+          <Link href="/dashboard" className="btn primary small">
+            Dashboard
+          </Link>
         )}
-      </section>
+      </SiteNav>
 
-      <ol className="steps">
-        <li>
-          <strong>1. Plan</strong>
-          <span>Add the videos, reels and series you're thinking about.</span>
-        </li>
-        <li>
-          <strong>2. Share</strong>
-          <span>Put your timeline link in your bio or video description.</span>
-        </li>
-        <li>
-          <strong>3. Create</strong>
-          <span>Fans vote, you make the top pick, then link it so they see it's out.</span>
-        </li>
-      </ol>
+      <main className="page landing">
+        <section className="hero">
+          <span className="eyebrow">
+            <b /> For YouTube &amp; Instagram creators
+          </span>
+          <h1>
+            Let your fans pick <span className="grad">what you make next.</span>
+          </h1>
+          <p className="lead">
+            Share a simple timeline of your upcoming ideas. Fans upvote. You create what they actually want to watch.
+          </p>
+        </section>
 
-      <SiteFooter />
-    </main>
-  );
-}
+        {error && <p className="banner error-banner">{error}</p>}
+        {q.deleted && <p className="banner">Your account has been deleted.</p>}
 
-function SiteFooter() {
-  return (
-    <footer className="site-footer">
-      <Link href="/privacy">Privacy</Link>
-      <Link href="/terms">Terms</Link>
-    </footer>
+        <section className="card signin">
+          {creator ? (
+            <div className="stack">
+              <h2>Welcome back, {creator.name}</h2>
+              <Link href="/dashboard" className="btn accent big block">
+                Open your dashboard →
+              </Link>
+            </div>
+          ) : user ? (
+            <div className="stack">
+              <h2>Welcome back, {user.name.split(" ")[0] || "there"}</h2>
+              <Link href="/explore" className="btn accent big block">
+                Explore creators and vote →
+              </Link>
+              <a href="/auth/google?intent=creator" className="btn big block">
+                🎬 I'm a creator too
+              </a>
+            </div>
+          ) : (
+            <SignInButtons />
+          )}
+        </section>
+
+        <section className="preview" aria-label="Example creator timeline">
+          <div className="preview-window">
+            <div className="preview-bar">
+              <i />
+              <i />
+              <i />
+              <span>nextup.app/@demo</span>
+            </div>
+            <div className="preview-body">
+              <div className="preview-head">
+                <div className="avatar" style={{ width: 40, height: 40, fontSize: 17, background: "var(--grad)" }}>
+                  M
+                </div>
+                <div className="grow">
+                  <h3>Maya Travels</h3>
+                  <span className="muted small">What should I make next?</span>
+                </div>
+                <span className="platform youtube">YouTube</span>
+              </div>
+              {PREVIEW.map((p, i) => (
+                <div key={p.title} className="preview-row">
+                  <span className="rank">#{i + 1}</span>
+                  <div className="grow">
+                    <span className={`pill ${p.cls}`}>{p.status}</span>
+                    <h3>{p.title}</h3>
+                  </div>
+                  <span className={`vote ${p.on ? "on" : ""}`}>
+                    <span className="arrow">▲</span>
+                    <span className="count">{p.votes}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="preview-cta">
+            <Link href="/@demo" className="btn small">
+              See the live demo →
+            </Link>
+          </div>
+        </section>
+
+        <ol className="steps">
+          <li>
+            <span className="step-num">1</span>
+            <strong>Plan</strong>
+            <span>Add the videos, reels and series you're thinking about.</span>
+          </li>
+          <li>
+            <span className="step-num">2</span>
+            <strong>Share</strong>
+            <span>Drop your timeline link in your bio or video description.</span>
+          </li>
+          <li>
+            <span className="step-num">3</span>
+            <strong>Create</strong>
+            <span>Make the top pick, then link it so fans see it's out.</span>
+          </li>
+        </ol>
+
+        <footer className="site-footer">
+          <span>© NextUp</span>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+        </footer>
+      </main>
+    </>
   );
 }

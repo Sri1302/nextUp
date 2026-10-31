@@ -1,14 +1,13 @@
-import Link from "next/link";
+import SiteNav from "@/components/SiteNav";
 
 export const metadata = { title: "Terms · NextUp" };
 
 // Starter terms: review with someone qualified before launch.
 export default function Terms() {
   return (
+    <>
+    <SiteNav />
     <main className="page prose">
-      <Link href="/" className="logo">
-        NextUp
-      </Link>
       <h1>Terms of use</h1>
       <p className="muted">Last updated: October 31, 2026</p>
 
@@ -30,5 +29,6 @@ export default function Terms() {
       <h2>No warranty</h2>
       <p>NextUp is provided as is. We may change or stop the service at any time.</p>
     </main>
+    </>
   );
 }

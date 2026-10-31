@@ -11,6 +11,7 @@ import ItemFields from "@/components/ItemFields";
 import ProfileForm from "@/components/ProfileForm";
 import ShareBar from "@/components/ShareBar";
 import SubmitButton from "@/components/SubmitButton";
+import SiteNav from "@/components/SiteNav";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Dashboard · NextUp", robots: { index: false } };
@@ -31,20 +32,16 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const shareUrl = `${origin}/@${me.handle}`;
 
   return (
-    <main className="page">
-      <nav className="topbar">
-        <Link href="/" className="logo">
-          NextUp
+    <>
+      <SiteNav>
+        <Link href={`/@${me.handle}`} className="btn ghost small">
+          View page
         </Link>
-        <div className="row gap-sm">
-          <Link href={`/@${me.handle}`} className="btn small ghost">
-            View public page
-          </Link>
-          <form action={signOut}>
-            <button className="btn small ghost">Sign out</button>
-          </form>
-        </div>
-      </nav>
+        <form action={signOut}>
+          <button className="btn small">Sign out</button>
+        </form>
+      </SiteNav>
+    <main className="page">
 
       {welcome && (
         <p className="banner">
@@ -100,14 +97,16 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </div>
         <form action={addItem} className="stack">
           <ItemFields />
-          <SubmitButton pendingText="Adding…" className="btn primary big">
+          <SubmitButton pendingText="Adding…" className="btn accent big block">
             Add to timeline →
           </SubmitButton>
         </form>
       </section>
 
       <section>
-        <h2 className="section-title">What fans want most</h2>
+        <h2 className="section-title">
+          What fans want most <span className="count-chip">{open.length}</span>
+        </h2>
         {open.length === 0 ? (
           <p className="empty">Nothing planned yet. Add your first idea above.</p>
         ) : (
@@ -135,5 +134,6 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         <ProfileForm creator={me} />
       </details>
     </main>
+    </>
   );
 }

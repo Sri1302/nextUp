@@ -1,14 +1,13 @@
-import Link from "next/link";
+import SiteNav from "@/components/SiteNav";
 
 export const metadata = { title: "Privacy · NextUp" };
 
 // Starter policy: review with someone qualified before launch.
 export default function Privacy() {
   return (
+    <>
+    <SiteNav />
     <main className="page prose">
-      <Link href="/" className="logo">
-        NextUp
-      </Link>
       <h1>Privacy policy</h1>
       <p className="muted">Last updated: October 31, 2026</p>
 
@@ -50,5 +49,6 @@ export default function Privacy() {
       <h2>Contact</h2>
       <p>Questions or deletion requests: add your contact email here before launch.</p>
     </main>
+    </>
   );
 }

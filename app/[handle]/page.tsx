@@ -8,6 +8,7 @@ import { voteLoginHref } from "@/lib/format";
 import Avatar from "@/components/Avatar";
 import { Followers, PlatformBadge } from "@/components/Bits";
 import PublicTimeline from "@/components/PublicTimeline";
+import SiteNav from "@/components/SiteNav";
 
 export const dynamic = "force-dynamic";
 
@@ -41,53 +42,70 @@ export default async function CreatorPage({ params }: Props) {
   const items = await data.getItems(creator.id, viewer?.id);
   const isOwner = viewer?.id === creator.userId;
   const path = `/@${creator.handle}`;
+  const loginHref = voteLoginHref(path);
 
   return (
-    <main className="page public">
-      {isOwner ? (
-        <div className="owner-bar">
-          This is your public page. <Link href="/dashboard">Back to dashboard</Link>
-        </div>
-      ) : (
-        viewer && (
-          <form action={signOut} className="viewer-bar">
+    <>
+      <SiteNav>
+        <Link href="/explore" className="btn ghost small hide-sm">
+          Explore
+        </Link>
+        {isOwner ? (
+          <Link href="/dashboard" className="btn primary small">
+            Dashboard
+          </Link>
+        ) : viewer ? (
+          <form action={signOut}>
             <input type="hidden" name="returnTo" value={path} />
-            <span>
-              Voting as <strong>{viewer.name || "you"}</strong>
-            </span>
-            <button className="linklike">Sign out</button>
+            <span className="viewer-chip hide-sm">{viewer.name.split(" ")[0]}</span>
+            <button className="btn small">Sign out</button>
           </form>
-        )
-      )}
-
-      <header className="public-head">
-        <Avatar name={creator.name} handle={creator.handle} url={creator.avatarUrl} size={84} />
-        <h1>{creator.name}</h1>
-        <div className="row wrap gap-sm center">
-          <span className="muted">@{creator.handle}</span>
-          <PlatformBadge platform={creator.platform} />
-          <Followers count={creator.followerCount} platform={creator.platform} />
-        </div>
-        {creator.bio && <p className="bio">{creator.bio}</p>}
-        {creator.channelUrl && (
-          <a className="btn small ghost" href={creator.channelUrl} target="_blank" rel="noopener noreferrer">
-            {creator.platform === "youtube" ? "Visit channel" : "Visit profile"} ↗
+        ) : (
+          <a href={loginHref} className="btn primary small">
+            Sign in to vote
           </a>
         )}
-      </header>
+      </SiteNav>
 
-      {!viewer && items.some((i) => i.status !== "done") && (
-        <a className="btn oauth google signin-to-vote" href={voteLoginHref(path)}>
-          <span className="oauth-icon" aria-hidden>G</span>
-          Sign in with Google to vote
-        </a>
-      )}
+      <main className="page public">
+        {isOwner && <div className="owner-bar">👀 This is how fans see your page.</div>}
 
-      <PublicTimeline items={items} platform={creator.platform} loginHref={viewer ? null : voteLoginHref(path)} />
+        <section className="profile">
+          <div className="profile-cover" />
+          <div className="profile-body">
+            <div className="avatar-ring">
+              <Avatar name={creator.name} handle={creator.handle} url={creator.avatarUrl} size={92} />
+            </div>
+            <h1>{creator.name}</h1>
+            <div className="row wrap gap-sm center">
+              <span className="muted">@{creator.handle}</span>
+              <PlatformBadge platform={creator.platform} />
+              <Followers count={creator.followerCount} platform={creator.platform} />
+            </div>
+            {creator.bio && <p className="bio">{creator.bio}</p>}
+            <div className="profile-actions">
+              {!viewer && items.some((i) => i.status !== "done") && (
+                <a className="btn accent" href={loginHref}>
+                  ▲ Sign in to vote
+                </a>
+              )}
+              {creator.channelUrl && (
+                <a className="btn" href={creator.channelUrl} target="_blank" rel="noopener noreferrer">
+                  {creator.platform === "youtube" ? "Visit channel" : "Visit profile"} ↗
+                </a>
+              )}
+            </div>
+          </div>
+        </section>
 
-      <footer className="made-with">
-        <Link href="/explore">Explore more creators</Link> · <Link href="/">Made with NextUp</Link>
-      </footer>
-    </main>
+        <PublicTimeline items={items} platform={creator.platform} loginHref={viewer ? null : loginHref} />
+
+        <footer className="made-with">
+          <Link href="/explore">Explore more creators</Link>
+          <span>·</span>
+          <Link href="/">Made with NextUp</Link>
+        </footer>
+      </main>
+    </>
   );
 }
