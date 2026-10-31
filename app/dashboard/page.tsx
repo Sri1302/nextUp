@@ -52,40 +52,57 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </p>
       )}
 
-      <header className="profile-head">
-        <Avatar name={me.name} handle={me.handle} url={me.avatarUrl} size={56} />
-        <div>
-          <h1>{me.name}</h1>
-          <div className="row wrap gap-sm">
-            <span className="muted">@{me.handle}</span>
-            <PlatformBadge platform={me.platform} />
-            <Followers count={me.followerCount} platform={me.platform} />
+      <section className="hero-card">
+        <div className="hero-top">
+          <div className="avatar-ring">
+            <Avatar name={me.name} handle={me.handle} url={me.avatarUrl} size={68} />
+          </div>
+          <div className="grow">
+            <p className="hero-greeting">Creator dashboard</p>
+            <h1>{me.name}</h1>
+            <div className="row wrap gap-sm">
+              <span className="hero-handle">@{me.handle}</span>
+              <PlatformBadge platform={me.platform} />
+              <Followers count={me.followerCount} platform={me.platform} />
+            </div>
           </div>
         </div>
-      </header>
-
-      <ShareBar url={shareUrl} />
+        <ShareBar url={shareUrl} path={`/@${me.handle}`} />
+      </section>
 
       <div className="stats">
-        <div>
+        <div className="stat">
+          <span className="stat-icon">🗂️</span>
           <strong>{open.length}</strong>
           <span>on the timeline</span>
         </div>
-        <div>
+        <div className="stat">
+          <span className="stat-icon">🔥</span>
           <strong>{totalVotes}</strong>
           <span>fan votes</span>
         </div>
-        <div>
+        <div className="stat">
+          <span className="stat-icon">🚀</span>
           <strong>{done.length}</strong>
           <span>delivered</span>
         </div>
       </div>
 
-      <section className="card">
-        <h2>Add to your timeline</h2>
+      <section className="card add-card">
+        <div className="add-head">
+          <span className="add-icon" aria-hidden>
+            ✨
+          </span>
+          <div>
+            <h2>Add a new idea</h2>
+            <p className="muted small">Fans see it on your page and can start voting right away.</p>
+          </div>
+        </div>
         <form action={addItem} className="stack">
           <ItemFields />
-          <SubmitButton pendingText="Adding…">Add to timeline</SubmitButton>
+          <SubmitButton pendingText="Adding…" className="btn primary big">
+            Add to timeline →
+          </SubmitButton>
         </form>
       </section>
 

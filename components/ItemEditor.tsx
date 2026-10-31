@@ -46,7 +46,7 @@ export default function ItemEditor({ item, rank }: { item: ItemWithVotes; rank: 
   }
 
   return (
-    <li className="card item">
+    <li className={`card item stripe ${item.status}`}>
       <div className="rank">#{rank}</div>
       <div className="grow">
         <div className="row wrap gap-sm">
@@ -59,9 +59,9 @@ export default function ItemEditor({ item, rank }: { item: ItemWithVotes; rank: 
           <p className="small warn">Add the link to the finished video so fans can see it.</p>
         )}
       </div>
-      <div className="votes-static">
+      <div className="vote-badge">
+        <span>▲</span>
         <strong>{item.votes}</strong>
-        <span className="small muted">votes</span>
       </div>
       <button className="btn small ghost" onClick={() => setEditing(true)}>
         Edit

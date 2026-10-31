@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function ShareBar({ url }: { url: string }) {
+export default function ShareBar({ url, path }: { url: string; path: string }) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -17,13 +17,16 @@ export default function ShareBar({ url }: { url: string }) {
 
   return (
     <div className="share">
-      <div>
-        <div className="small muted">Your public timeline: put it in your Instagram bio or YouTube description</div>
-        <code className="share-url">{url}</code>
+      <div className="share-label">🔗 Your public timeline · put it in your bio or video description</div>
+      <div className="share-row">
+        <code className="share-url">{url.replace(/^https?:\/\//, "")}</code>
+        <button className={`share-btn ${copied ? "done" : ""}`} onClick={copy}>
+          {copied ? "✓ Copied" : "Copy"}
+        </button>
+        <a className="share-btn ghost" href={path} target="_blank" rel="noopener">
+          Open ↗
+        </a>
       </div>
-      <button className="btn small" onClick={copy}>
-        {copied ? "Copied!" : "Copy link"}
-      </button>
     </div>
   );
 }
