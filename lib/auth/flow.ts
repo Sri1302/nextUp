@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ensureCreator, type CreatorProfile, type OAuthIdentity, upsertOAuthUser } from "../data";
 import type { Intent } from "./oauth";
 import { createSession } from "./session";
+import { appUrl } from "../env";
 
 export const OAUTH_COOKIE = "nu_oauth";
 
@@ -21,7 +22,7 @@ export function safeReturnTo(raw: string | null | undefined) {
 
 // The site's public origin, used for OAuth redirect URIs. APP_URL wins over request headers.
 export function appOrigin(req: NextRequest) {
-  return process.env.APP_URL?.replace(/\/$/, "") || req.nextUrl.origin;
+  return appUrl() || req.nextUrl.origin;
 }
 
 // Shared tail of every sign-in: user, session, creator profile, then where to go next.

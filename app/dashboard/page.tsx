@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { addItem, signOut } from "@/app/actions";
 import * as data from "@/lib/data";
 import { getCurrentUser } from "@/lib/auth/session";
+import { appUrl } from "@/lib/env";
 import Avatar from "@/components/Avatar";
 import { Followers, PlatformBadge } from "@/components/Bits";
 import ItemEditor from "@/components/ItemEditor";
@@ -28,7 +29,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const totalVotes = items.reduce((n, i) => n + i.votes, 0);
 
   const h = await headers();
-  const origin = process.env.APP_URL?.replace(/\/$/, "") || `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
+  const origin = appUrl() || `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
   const shareUrl = `${origin}/@${me.handle}`;
 
   return (

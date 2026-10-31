@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { env } from "../env";
 import type { CreatorProfile, OAuthIdentity } from "../data";
 import type { Provider } from "../types";
 
@@ -10,8 +11,8 @@ export type OAuthResult = {
 };
 
 const config = {
-  google: { id: process.env.GOOGLE_CLIENT_ID, secret: process.env.GOOGLE_CLIENT_SECRET },
-  instagram: { id: process.env.INSTAGRAM_CLIENT_ID, secret: process.env.INSTAGRAM_CLIENT_SECRET },
+  google: { id: env("GOOGLE_CLIENT_ID"), secret: env("GOOGLE_CLIENT_SECRET") },
+  instagram: { id: env("INSTAGRAM_CLIENT_ID"), secret: env("INSTAGRAM_CLIENT_SECRET") },
 };
 
 export function isProvider(p: string): p is Provider {
