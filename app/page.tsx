@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getCreatorByUserId } from "@/lib/data";
 import SignInButtons from "@/components/SignInButtons";
 import SiteNav from "@/components/SiteNav";
+import { PlatformBadge } from "@/components/Bits";
 
 export const dynamic = "force-dynamic";
 
@@ -94,7 +95,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
                   <h3>Maya Travels</h3>
                   <span className="muted small">What should I make next?</span>
                 </div>
-                <span className="platform youtube">YouTube</span>
+                <PlatformBadge platform="youtube" />
               </div>
               {PREVIEW.map((p, i) => (
                 <div key={p.title} className="preview-row">

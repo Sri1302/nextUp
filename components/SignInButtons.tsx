@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GoogleIcon, InstagramIcon, YouTubeIcon } from "./BrandIcons";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -41,13 +42,13 @@ export default function SignInButtons() {
       {role === "creator" ? (
         <>
           <h2>Sign in as a creator</h2>
-          <a href="/auth/google?intent=creator" className="btn oauth google">
-            <span className="oauth-icon" aria-hidden>G</span>
+          <a href="/auth/google?intent=creator" className="btn oauth">
+            <span className="oauth-logo"><YouTubeIcon size={20} /></span>
             Continue with YouTube
             <span className="oauth-arrow" aria-hidden>→</span>
           </a>
-          <a href="/auth/instagram?intent=creator" className="btn oauth instagram">
-            <span className="oauth-icon" aria-hidden>◎</span>
+          <a href="/auth/instagram?intent=creator" className="btn oauth">
+            <span className="oauth-logo"><InstagramIcon size={26} /></span>
             Continue with Instagram
             <span className="oauth-arrow" aria-hidden>→</span>
           </a>
@@ -64,8 +65,8 @@ export default function SignInButtons() {
       ) : (
         <>
           <h2>Sign in as a fan</h2>
-          <a href="/auth/google?intent=fan&returnTo=%2Fexplore" className="btn oauth google">
-            <span className="oauth-icon" aria-hidden>G</span>
+          <a href="/auth/google?intent=fan&returnTo=%2Fexplore" className="btn oauth">
+            <span className="oauth-logo"><GoogleIcon size={24} /></span>
             Continue with Google
             <span className="oauth-arrow" aria-hidden>→</span>
           </a>

@@ -1,10 +1,14 @@
 import type { Platform, Status } from "@/lib/types";
 import { STATUS_LABEL } from "@/lib/types";
 import { compactNumber } from "@/lib/format";
+import { InstagramIcon, YouTubeIcon } from "./BrandIcons";
 
 export function PlatformBadge({ platform }: { platform: Platform }) {
   return (
-    <span className={`platform ${platform}`}>{platform === "youtube" ? "YouTube" : "Instagram"}</span>
+    <span className="platform">
+      {platform === "youtube" ? <YouTubeIcon size={12} /> : <InstagramIcon size={14} />}
+      {platform === "youtube" ? "YouTube" : "Instagram"}
+    </span>
   );
 }
 

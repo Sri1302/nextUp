@@ -49,16 +49,16 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </p>
       )}
 
-      <section className="hero-card">
-        <div className="hero-top">
+      <section className="card creator-head">
+        <div className="creator-head-top">
           <div className="avatar-ring">
-            <Avatar name={me.name} handle={me.handle} url={me.avatarUrl} size={68} />
+            <Avatar name={me.name} handle={me.handle} url={me.avatarUrl} size={64} />
           </div>
           <div className="grow">
-            <p className="hero-greeting">Creator dashboard</p>
+            <p className="eyebrow-text">Creator dashboard</p>
             <h1>{me.name}</h1>
             <div className="row wrap gap-sm">
-              <span className="hero-handle">@{me.handle}</span>
+              <span className="muted">@{me.handle}</span>
               <PlatformBadge platform={me.platform} />
               <Followers count={me.followerCount} platform={me.platform} />
             </div>

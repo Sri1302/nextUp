@@ -17,13 +17,13 @@ export default function ShareBar({ url, path }: { url: string; path: string }) {
 
   return (
     <div className="share">
-      <div className="share-label">🔗 Your public timeline · put it in your bio or video description</div>
+      <div className="share-label">Your public link · add it to your bio or video description</div>
       <div className="share-row">
         <code className="share-url">{url.replace(/^https?:\/\//, "")}</code>
-        <button className={`share-btn ${copied ? "done" : ""}`} onClick={copy}>
-          {copied ? "✓ Copied" : "Copy"}
+        <button className={`btn small ${copied ? "copied" : "primary"}`} onClick={copy}>
+          {copied ? "✓ Copied" : "Copy link"}
         </button>
-        <a className="share-btn ghost" href={path} target="_blank" rel="noopener">
+        <a className="btn small" href={path} target="_blank" rel="noopener">
           Open ↗
         </a>
       </div>
