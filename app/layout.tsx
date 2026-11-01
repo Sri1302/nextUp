@@ -1,12 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { siteUrl } from "@/lib/env";
 import "./globals.css";
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
+  // Absolute base for canonical and Open Graph URLs, so only one domain gets indexed.
+  metadataBase: new URL(siteUrl()),
   title: "NextUp: let your fans vote on what you make next",
   description: "A public content roadmap for YouTube and Instagram creators.",
+  openGraph: { siteName: "NextUp", type: "website" },
 };
 
 export const viewport: Viewport = {

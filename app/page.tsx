@@ -7,6 +7,7 @@ import SiteNav from "@/components/SiteNav";
 import { PlatformBadge } from "@/components/Bits";
 
 export const dynamic = "force-dynamic";
+export const metadata = { alternates: { canonical: "/" } };
 
 const MESSAGES: Record<string, string> = {
   denied: "Sign-in was cancelled.",

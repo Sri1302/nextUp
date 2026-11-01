@@ -8,3 +8,9 @@ export function env(name: string) {
 export function appUrl() {
   return env("APP_URL")?.replace(/\/$/, "");
 }
+
+// Public URL used for canonical links and the sitemap. On Vercel, falls back to the project's production domain.
+export function siteUrl() {
+  const vercel = env("VERCEL_PROJECT_PRODUCTION_URL");
+  return appUrl() || (vercel ? `https://${vercel}` : "http://localhost:3000");
+}

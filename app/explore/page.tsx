@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Explore creators · NextUp",
   description: "Find YouTube and Instagram creators and vote on what they make next.",
+  alternates: { canonical: "/explore" },
 };
 
 export default async function Explore({ searchParams }: { searchParams: Promise<{ q?: string; cat?: string }> }) {

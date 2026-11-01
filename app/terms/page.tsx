@@ -1,6 +1,6 @@
 import SiteNav from "@/components/SiteNav";
 
-export const metadata = { title: "Terms · NextUp" };
+export const metadata = { title: "Terms · NextUp", alternates: { canonical: "/terms" } };
 
 // Starter terms: review with someone qualified before launch.
 export default function Terms() {

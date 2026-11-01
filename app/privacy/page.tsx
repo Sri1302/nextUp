@@ -1,6 +1,6 @@
 import SiteNav from "@/components/SiteNav";
 
-export const metadata = { title: "Privacy · NextUp" };
+export const metadata = { title: "Privacy · NextUp", alternates: { canonical: "/privacy" } };
 
 // Starter policy: review with someone qualified before launch.
 export default function Privacy() {
