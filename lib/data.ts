@@ -203,6 +203,11 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
   throw new Error("Could not create creator profile");
 }
 
+export async function setCreatorTheme(creatorId: string, theme: string) {
+  const db = await getDb();
+  await db.update(creators).set({ theme }).where(eq(creators.id, creatorId));
+}
+
 // Links a public YouTube channel to a creator page. One channel can only be on one page.
 export async function linkYouTubeChannel(
   creatorId: string,

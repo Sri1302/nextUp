@@ -2,8 +2,8 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
 import { countCreators, getCreatorByUserId, listCreators } from "@/lib/data";
 import { isConfigured } from "@/lib/auth/oauth";
-import { themeVars } from "@/lib/format";
 import ClaimForm from "@/components/ClaimForm";
+import PageBuilder from "@/components/PageBuilder";
 import CreatorCard from "@/components/CreatorCard";
 import { InstagramIcon, YouTubeIcon } from "@/components/BrandIcons";
 
@@ -17,12 +17,6 @@ const MESSAGES: Record<string, string> = {
   not_configured: "This sign-in option isn't set up yet.",
 };
 
-// Illustrative example page on the homepage (fictional creator; photo: Webvilla on Unsplash, Unsplash License).
-const MOCK = [
-  { title: "Hyderabadi dum biryani at home", status: "Planned · Dec", votes: 184, on: true },
-  { title: "5 breakfasts under ₹50", status: "Filming now", votes: 142, on: false },
-  { title: "Rating every Irani café in town", status: "Idea", votes: 97, on: false },
-];
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const q = await searchParams;
@@ -43,9 +37,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         </Link>
         <nav>
           {liveCount > 0 && (
-            <Link href="/explore" className="lp-live" title="Creators with a NextUp page">
+            <Link href="/explore" className="lp-live" title="Creators who already have a NextUp page">
               <span className="live-dot" aria-hidden />
-              {liveCount} live
+              {liveCount} {liveCount === 1 ? "creator" : "creators"} on NextUp
             </Link>
           )}
           <Link href="/explore" className="lp-link">
@@ -76,12 +70,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         {q.deleted && <p className="lp-note">Your account has been deleted.</p>}
 
         {creator ? (
-          <Link href="/dashboard" className="claim-btn solo">
-            Open your dashboard <span aria-hidden>→</span>
-          </Link>
+          <div className="lp-signed">
+            <Link href="/dashboard" className="claim-btn solo">
+              Open your dashboard <span aria-hidden>→</span>
+            </Link>
+            <Link href={`/@${creator.handle}`} className="lp-link">
+              View your page ↗
+            </Link>
+          </div>
         ) : (
           <>
-            <ClaimForm />
+            <PageBuilder />
             <p className="lp-or">
               or continue with{" "}
               <a href="/auth/google?intent=creator">
@@ -96,53 +95,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
                   </a>
                 </>
               )}
+              {user && (
+                <>
+                  {" "}
+                  · Here to vote? <Link href="/explore">Explore creators →</Link>
+                </>
+              )}
             </p>
-            {user && (
-              <p className="lp-or">
-                Here to vote? <Link href="/explore">Explore creators →</Link>
-              </p>
-            )}
           </>
         )}
-
-        <div className="lp-stage">
-          <div className="lp-float f1">
-            <b>+1</b> vote on <span>dum biryani</span>
-          </div>
-          <div className="lp-float f2">🔥 Most wanted</div>
-          <div className="lp-float f3">✓ Out now: Mango lassi 3 ways</div>
-
-          <div className="phone" style={themeVars("sand")} aria-label="Example creator page">
-            <div className="phone-hero">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="phone-photo" src="/example/kitchen.jpg" alt="" />
-              <div className="phone-fade" />
-            </div>
-            <div className="phone-body">
-              <strong>Kavya&apos;s Kitchen</strong>
-              <span>@kavyaskitchen · 412K subscribers</span>
-              <div className="phone-icons">
-                <i />
-                <i />
-                <i />
-              </div>
-              <div className="phone-label">Vote on what&apos;s next</div>
-              {MOCK.map((m) => (
-                <div key={m.title} className="phone-card">
-                  <div>
-                    <em>{m.status}</em>
-                    <b>{m.title}</b>
-                  </div>
-                  <span className={m.on ? "on" : ""}>
-                    ▲<br />
-                    {m.votes}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="lp-caption">Example page</p>
-        </div>
       </section>
 
       {creators.length > 0 && (
