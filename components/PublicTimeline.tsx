@@ -2,91 +2,84 @@
 
 import { useState } from "react";
 import type { ItemWithVotes, Platform } from "@/lib/types";
-import { monthLabel } from "@/lib/format";
-import { StatusPill } from "./Bits";
+import { STATUS_LABEL } from "@/lib/types";
+import { monthLabel, youtubeId } from "@/lib/format";
+import { MonoIcon } from "./BrandIcons";
 import VoteButton from "./VoteButton";
 
 type View = "top" | "timeline";
+type ViewProps = { items: ItemWithVotes[]; platform: Platform; loginHref: string | null };
 
-export default function PublicTimeline({
-  items,
-  platform,
-  loginHref,
-}: {
-  items: ItemWithVotes[];
-  platform: Platform;
-  loginHref: string | null;
-}) {
+export default function PublicTimeline({ items, platform, loginHref }: ViewProps) {
   const [view, setView] = useState<View>("top");
+  const open = items.filter((i) => i.status !== "done");
+  const done = items.filter((i) => i.status === "done");
 
   if (items.length === 0) {
-    return <p className="empty">Nothing on the timeline yet. Check back soon!</p>;
+    return (
+      <section className="cp-section">
+        <div className="cp-empty">Nothing on the timeline yet. Check back soon!</div>
+      </section>
+    );
   }
 
   return (
     <>
-      <div className="segmented tabs" role="tablist">
-        <button role="tab" aria-selected={view === "top"} className={view === "top" ? "on" : ""} onClick={() => setView("top")}>
-          Most wanted
-        </button>
-        <button
-          role="tab"
-          aria-selected={view === "timeline"}
-          className={view === "timeline" ? "on" : ""}
-          onClick={() => setView("timeline")}
-        >
-          Timeline
-        </button>
-      </div>
-      {view === "top" ? (
-        <TopView items={items} platform={platform} loginHref={loginHref} />
-      ) : (
-        <TimelineView items={items} platform={platform} loginHref={loginHref} />
+      {open.length > 0 && (
+        <section className="cp-section">
+          <div className="cp-head">
+            <h2>Vote on what&apos;s next</h2>
+            <div className="cp-tabs" role="tablist">
+              {(["top", "timeline"] as const).map((v) => (
+                <button key={v} role="tab" aria-selected={view === v} className={view === v ? "on" : ""} onClick={() => setView(v)}>
+                  {v === "top" ? "Top" : "Timeline"}
+                </button>
+              ))}
+            </div>
+          </div>
+          {view === "top" ? <TopView items={open} platform={platform} loginHref={loginHref} /> : <TimelineView items={open} platform={platform} loginHref={loginHref} />}
+        </section>
       )}
-    </>
-  );
-}
 
-type ViewProps = { items: ItemWithVotes[]; platform: Platform; loginHref: string | null };
-
-function TopView({ items, platform, loginHref }: ViewProps) {
-  const open = items.filter((i) => i.status !== "done").sort((a, b) => b.votes - a.votes);
-  const done = items.filter((i) => i.status === "done");
-  return (
-    <>
-      <p className="hint">Tap ▲ on what you want to see next.</p>
-      <ol className="list">
-        {open.map((item, idx) => (
-          <li key={item.id} className={`card item ${idx === 0 && item.votes > 0 ? "top" : ""}`}>
-            <div className="rank">#{idx + 1}</div>
-            <ItemBody item={item} platform={platform} top={idx === 0 && item.votes > 0} />
-            <VoteButton itemId={item.id} votes={item.votes} voted={item.voted} loginHref={loginHref} />
-          </li>
-        ))}
-      </ol>
       {done.length > 0 && (
-        <>
-          <h2 className="section-title">
-            You asked, it's out <span className="count-chip">{done.length}</span>
-          </h2>
-          <ul className="list">
+        <section className="cp-section">
+          <div className="cp-head">
+            <h2>You asked, it&apos;s out</h2>
+          </div>
+          <div className="cp-list">
             {done.map((item) => (
-              <li key={item.id} className="card item done">
-                <ItemBody item={item} platform={platform} />
-                <div className="votes-static">
-                  <strong>{item.votes}</strong>
-                  <span className="small muted">votes</span>
-                </div>
-              </li>
+              <OutNow key={item.id} item={item} platform={platform} />
             ))}
-          </ul>
-        </>
+          </div>
+        </section>
       )}
     </>
   );
 }
 
-function TimelineView({ items, platform, loginHref }: ViewProps) {
+function TopView({ items, loginHref }: ViewProps) {
+  const ranked = [...items].sort((a, b) => b.votes - a.votes);
+  const [first, ...rest] = ranked;
+  const featured = first.votes > 0;
+  return (
+    <div className="cp-list">
+      {featured && (
+        <article className="cp-feature">
+          <div className="cp-feature-label">🔥 Most wanted right now</div>
+          <Meta item={first} />
+          <h3>{first.title}</h3>
+          {first.description && <p>{first.description}</p>}
+          <VoteButton itemId={first.id} votes={first.votes} voted={first.voted} loginHref={loginHref} wide />
+        </article>
+      )}
+      {(featured ? rest : ranked).map((item, i) => (
+        <IdeaCard key={item.id} item={item} rank={i + (featured ? 2 : 1)} loginHref={loginHref} />
+      ))}
+    </div>
+  );
+}
+
+function TimelineView({ items, loginHref }: ViewProps) {
   const sorted = [...items].sort((a, b) => {
     if (!a.targetMonth !== !b.targetMonth) return a.targetMonth ? -1 : 1;
     return a.targetMonth.localeCompare(b.targetMonth) || b.votes - a.votes;
@@ -98,48 +91,71 @@ function TimelineView({ items, platform, loginHref }: ViewProps) {
     if (last?.label === label) last.items.push(item);
     else groups.push({ label, items: [item] });
   }
-
   return (
-    <div className="timeline">
+    <div className="cp-list">
       {groups.map((g) => (
-        <section key={g.label} className="tl-group">
-          <h3 className="tl-month">
-            <span className="dot" />
-            {g.label}
-          </h3>
-          <ul className="list">
+        <div key={g.label} className="cp-month">
+          <h4>{g.label}</h4>
+          <div className="cp-list">
             {g.items.map((item) => (
-              <li key={item.id} className={`card item ${item.status === "done" ? "done" : ""}`}>
-                <ItemBody item={item} platform={platform} />
-                {item.status === "done" ? (
-                  <div className="votes-static">
-                    <strong>{item.votes}</strong>
-                    <span className="small muted">votes</span>
-                  </div>
-                ) : (
-                  <VoteButton itemId={item.id} votes={item.votes} voted={item.voted} loginHref={loginHref} />
-                )}
-              </li>
+              <IdeaCard key={item.id} item={item} loginHref={loginHref} />
             ))}
-          </ul>
-        </section>
+          </div>
+        </div>
       ))}
     </div>
   );
 }
 
-function ItemBody({ item, platform, top }: { item: ItemWithVotes; platform: Platform; top?: boolean }) {
+function Meta({ item }: { item: ItemWithVotes }) {
   return (
-    <div className="grow">
-      <StatusPill status={item.status} />
-      {top && <span className="top-label">🔥 Most wanted</span>}
-      <h3>{item.title}</h3>
-      {item.description && <p className="muted">{item.description}</p>}
-      {item.status === "done" && item.doneUrl && (
-        <a className="watch" href={item.doneUrl} target="_blank" rel="noopener noreferrer">
-          {platform === "youtube" ? "▶ Watch it" : "View the post"} →
-        </a>
-      )}
-    </div>
+    <span className={`cp-meta ${item.status}`}>
+      <i aria-hidden />
+      {STATUS_LABEL[item.status]}
+      {item.targetMonth && item.status !== "done" ? ` · ${monthLabel(item.targetMonth)}` : ""}
+    </span>
+  );
+}
+
+function IdeaCard({ item, rank, loginHref }: { item: ItemWithVotes; rank?: number; loginHref: string | null }) {
+  return (
+    <article className="cp-item">
+      {rank != null && <span className="cp-rank">{rank}</span>}
+      <div className="grow">
+        <Meta item={item} />
+        <h3>{item.title}</h3>
+        {item.description && <p>{item.description}</p>}
+      </div>
+      <VoteButton itemId={item.id} votes={item.votes} voted={item.voted} loginHref={loginHref} />
+    </article>
+  );
+}
+
+function OutNow({ item, platform }: { item: ItemWithVotes; platform: Platform }) {
+  const vid = item.doneUrl ? youtubeId(item.doneUrl) : undefined;
+  const body = (
+    <>
+      <div className="cp-thumb">
+        {vid ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`} alt="" loading="lazy" />
+        ) : (
+          <MonoIcon name={platform} size={26} />
+        )}
+      </div>
+      <div className="grow">
+        <h3>{item.title}</h3>
+        <span className="cp-watch">
+          {item.doneUrl ? (platform === "youtube" ? "▶ Watch now" : "View the post") : "Out now"} · ▲ {item.votes} asked for it
+        </span>
+      </div>
+    </>
+  );
+  return item.doneUrl ? (
+    <a className="cp-out" href={item.doneUrl} target="_blank" rel="noopener noreferrer">
+      {body}
+    </a>
+  ) : (
+    <div className="cp-out">{body}</div>
   );
 }

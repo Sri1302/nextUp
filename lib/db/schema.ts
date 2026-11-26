@@ -56,6 +56,7 @@ export const creators = pgTable("creators", {
   bio: text("bio").notNull().default(""),
   avatarUrl: text("avatar_url").notNull().default(""),
   followerCount: integer("follower_count"),
+  theme: text("theme").notNull().default(""), // key of THEMES, "" = pick from handle
   categories: text("categories").array().notNull().default(sql`'{}'::text[]`), // keys of CATEGORIES
   createdAt: createdAt(),
 });

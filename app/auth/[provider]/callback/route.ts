@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ prov
 
   try {
     const result = await exchangeCode(provider, { origin, code, verifier: saved.verifier, intent: saved.intent });
-    return await finishSignIn(req, { ...result, intent: saved.intent, returnTo: saved.returnTo });
+    return await finishSignIn(req, { ...result, intent: saved.intent, returnTo: saved.returnTo, handle: saved.handle });
   } catch (err) {
     console.error(`OAuth callback failed for ${provider}`, err);
     return fail("signin_failed");

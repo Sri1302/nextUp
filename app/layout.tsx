@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Instrument_Serif, Poppins } from "next/font/google";
 import { siteUrl } from "@/lib/env";
 import "./globals.css";
 
-const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const sans = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-sans" });
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["italic"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
   // Absolute base for canonical and Open Graph URLs, so only one domain gets indexed.
@@ -24,7 +25,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={sans.variable}>
+    <html lang="en" className={`${sans.variable} ${serif.variable}`}>
       <body>{children}</body>
     </html>
   );

@@ -43,6 +43,21 @@ export function isCategory(v: unknown): v is Category {
   return typeof v === "string" && v in CATEGORIES;
 }
 
+// Creator page colour themes (page background, card surface, accent, text, muted text).
+export const THEMES = {
+  sage: { label: "Sage", bg: "#dfe9d6", card: "#ffffff", accent: "#2f6b45", text: "#13231a", muted: "#55665a", dark: false },
+  sand: { label: "Sand", bg: "#efe4d4", card: "#fffaf3", accent: "#9a5b24", text: "#2a1d10", muted: "#76634f", dark: false },
+  sky: { label: "Sky", bg: "#d9e8f5", card: "#ffffff", accent: "#1d5fa8", text: "#0f1f33", muted: "#52657a", dark: false },
+  blush: { label: "Blush", bg: "#f5dfe5", card: "#fffafb", accent: "#b03a5b", text: "#2e1219", muted: "#7a5560", dark: false },
+  lilac: { label: "Lilac", bg: "#e6defa", card: "#ffffff", accent: "#6a45f5", text: "#1b1336", muted: "#5f5679", dark: false },
+  night: { label: "Night", bg: "#121214", card: "#1d1d21", accent: "#b9a2ff", text: "#f4f4f6", muted: "#a3a3ad", dark: true },
+} as const;
+export type ThemeKey = keyof typeof THEMES;
+export const THEME_KEYS = Object.keys(THEMES) as ThemeKey[];
+export function isTheme(v: unknown): v is ThemeKey {
+  return typeof v === "string" && v in THEMES;
+}
+
 export type User = InferSelectModel<typeof schema.users>;
 export type Creator = InferSelectModel<typeof schema.creators>;
 export type Item = InferSelectModel<typeof schema.items>;

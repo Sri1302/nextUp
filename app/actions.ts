@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import * as data from "@/lib/data";
 import { safeReturnTo } from "@/lib/auth/flow";
 import { destroySession, getCurrentUser } from "@/lib/auth/session";
-import { MAX_CATEGORIES, PLATFORMS, STATUSES, isCategory, type Platform, type Status } from "@/lib/types";
+import { MAX_CATEGORIES, PLATFORMS, STATUSES, isCategory, isTheme, type Platform, type Status } from "@/lib/types";
 
 function str(fd: FormData, key: string, max = 500) {
   return String(fd.get(key) ?? "").trim().slice(0, max);
@@ -90,6 +90,7 @@ export async function updateProfile(_prev: string | null, fd: FormData): Promise
     channelUrl: cleanUrl(str(fd, "channelUrl", 300)),
     bio: str(fd, "bio", 280),
     categories: [...new Set(fd.getAll("categories").filter(isCategory))].slice(0, MAX_CATEGORIES),
+    theme: isTheme(fd.get("theme")) ? (fd.get("theme") as string) : creator.theme,
   });
   if (!err) refresh();
   return err ?? "saved";

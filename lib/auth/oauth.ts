@@ -125,7 +125,7 @@ async function google(o: { origin: string; code: string; verifier: string; inten
         const data = (await res.json()) as {
           items?: {
             id: string;
-            snippet: { title: string; customUrl?: string; thumbnails?: { medium?: { url: string }; default?: { url: string } } };
+            snippet: { title: string; customUrl?: string; thumbnails?: { high?: { url: string }; medium?: { url: string }; default?: { url: string } } };
             statistics?: { subscriberCount?: string; hiddenSubscriberCount?: boolean };
             topicDetails?: { topicCategories?: string[] };
           }[];
@@ -137,7 +137,8 @@ async function google(o: { origin: string; code: string; verifier: string; inten
           creator.channelUrl = ch.snippet.customUrl
             ? `https://www.youtube.com/${ch.snippet.customUrl}`
             : `https://www.youtube.com/channel/${ch.id}`;
-          creator.avatarUrl = ch.snippet.thumbnails?.medium?.url ?? ch.snippet.thumbnails?.default?.url ?? creator.avatarUrl;
+          const th = ch.snippet.thumbnails;
+          creator.avatarUrl = th?.high?.url ?? th?.medium?.url ?? th?.default?.url ?? creator.avatarUrl;
           const subs = Number(ch.statistics?.subscriberCount);
           creator.followerCount = ch.statistics?.hiddenSubscriberCount || !Number.isFinite(subs) ? null : subs;
           creator.categories = categoriesFromYouTubeTopics(ch.topicDetails?.topicCategories);

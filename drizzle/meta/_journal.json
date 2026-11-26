@@ -15,6 +15,13 @@
       "when": 1793448597890,
       "tag": "0001_creator_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795663574552,
+      "tag": "0002_creator_theme",
+      "breakpoints": true
     }
   ]
 }

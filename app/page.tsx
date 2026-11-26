@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
-import { countCreators, getCreatorByUserId } from "@/lib/data";
-import SignInButtons from "@/components/SignInButtons";
+import { countCreators, getCreatorByUserId, listCreators } from "@/lib/data";
 import { isConfigured } from "@/lib/auth/oauth";
-import SiteNav from "@/components/SiteNav";
-import { PlatformBadge } from "@/components/Bits";
+import { themeVars } from "@/lib/format";
+import ClaimForm from "@/components/ClaimForm";
+import CreatorCard from "@/components/CreatorCard";
+import { InstagramIcon, YouTubeIcon } from "@/components/BrandIcons";
 
 export const dynamic = "force-dynamic";
 export const metadata = { alternates: { canonical: "/" } };
@@ -16,10 +17,10 @@ const MESSAGES: Record<string, string> = {
   not_configured: "This sign-in option isn't set up yet.",
 };
 
-const PREVIEW = [
-  { title: "Solo trip to Iceland in winter", status: "Planned", cls: "planned", votes: 57, on: true },
-  { title: "Japan on $50 a day", status: "In progress", cls: "in_progress", votes: 48, on: false },
-  { title: "My full travel camera kit", status: "Idea", cls: "idea", votes: 22, on: false },
+const MOCK = [
+  { title: "Solo trip to Iceland in winter", status: "Planned", votes: 57, on: true },
+  { title: "Japan on $50 a day", status: "Filming now", votes: 48, on: false },
+  { title: "My full travel camera kit", status: "Idea", votes: 22, on: false },
 ];
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -27,132 +28,175 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   const user = await getCurrentUser();
   const creator = user && (await getCreatorByUserId(user.id));
   const error = q.error && (MESSAGES[q.error] ?? MESSAGES.signin_failed);
-  const liveCount = await countCreators();
+  const [liveCount, creators] = await Promise.all([countCreators(), listCreators("", undefined, 8)]);
+  const instagram = isConfigured("instagram") || process.env.NODE_ENV === "development";
 
   return (
-    <>
-      <SiteNav>
-        {liveCount > 0 && (
-          <Link href="/explore" className="live-pill" title="Creators with a NextUp timeline">
-            <span className="live-dot" aria-hidden />
-            <strong>{liveCount.toLocaleString("en")}</strong>
-            <span className="hide-sm">{liveCount === 1 ? "creator" : "creators"}</span> live
-          </Link>
-        )}
-        <Link href="/explore" className="btn ghost small">
-          Explore
-        </Link>
-        {creator && (
-          <Link href="/dashboard" className="btn primary small">
-            Dashboard
-          </Link>
-        )}
-      </SiteNav>
-
-      <main className="page landing">
-        <section className="hero">
-          <span className="eyebrow">
-            <b /> For YouTube &amp; Instagram creators
+    <div className="lp">
+      <header className="lp-nav">
+        <Link href="/" className="lp-logo">
+          <span className="logo-mark" aria-hidden>
+            ▲
           </span>
-          <h1>
-            Let your fans pick <span className="grad">what you make next.</span>
-          </h1>
-          <p className="lead">
-            Share a simple timeline of your upcoming ideas. Fans upvote. You create what they actually want to watch.
-          </p>
-        </section>
-
-        {error && <p className="banner error-banner">{error}</p>}
-        {q.deleted && <p className="banner">Your account has been deleted.</p>}
-
-        <section className="card signin">
-          {creator ? (
-            <div className="stack">
-              <h2>Welcome back, {creator.name}</h2>
-              <Link href="/dashboard" className="btn accent big block">
-                Open your dashboard →
-              </Link>
-            </div>
-          ) : user ? (
-            <div className="stack">
-              <h2>Welcome back, {user.name.split(" ")[0] || "there"}</h2>
-              <Link href="/explore" className="btn accent big block">
-                Explore creators and vote →
-              </Link>
-              <a href="/auth/google?intent=creator" className="btn big block">
-                🎬 I'm a creator too
-              </a>
-            </div>
-          ) : (
-            <SignInButtons instagram={isConfigured("instagram") || process.env.NODE_ENV === "development"} />
+          NextUp
+        </Link>
+        <nav>
+          {liveCount > 0 && (
+            <Link href="/explore" className="lp-live" title="Creators with a NextUp page">
+              <span className="live-dot" aria-hidden />
+              {liveCount} live
+            </Link>
           )}
-        </section>
+          <Link href="/explore" className="lp-link">
+            Explore
+          </Link>
+          {creator ? (
+            <Link href="/dashboard" className="lp-pill">
+              Dashboard
+            </Link>
+          ) : (
+            <a href="/auth/google?intent=creator" className="lp-pill">
+              Log in
+            </a>
+          )}
+        </nav>
+      </header>
 
-        <section className="preview" aria-label="Example creator timeline">
-          <div className="preview-window">
-            <div className="preview-bar">
-              <i />
-              <i />
-              <i />
-              <span>nextup.app/@demo</span>
+      <section className="lp-hero">
+        <div className="lp-glow" aria-hidden />
+        <p className="lp-eyebrow">For YouTube &amp; Instagram creators</p>
+        <h1>
+          Your fans pick
+          <em>what you make next</em>
+        </h1>
+        <p className="lp-lead">One link for your bio. Fans upvote the videos you&apos;re planning, and you make what they actually want.</p>
+
+        {error && <p className="lp-error">{error}</p>}
+        {q.deleted && <p className="lp-note">Your account has been deleted.</p>}
+
+        {creator ? (
+          <Link href="/dashboard" className="claim-btn solo">
+            Open your dashboard <span aria-hidden>→</span>
+          </Link>
+        ) : (
+          <>
+            <ClaimForm />
+            <p className="lp-or">
+              or continue with{" "}
+              <a href="/auth/google?intent=creator">
+                <YouTubeIcon size={12} /> YouTube
+              </a>
+              {instagram && (
+                <>
+                  {" "}
+                  ·{" "}
+                  <a href="/auth/instagram?intent=creator">
+                    <InstagramIcon size={14} /> Instagram
+                  </a>
+                </>
+              )}
+            </p>
+            {user && (
+              <p className="lp-or">
+                Here to vote? <Link href="/explore">Explore creators →</Link>
+              </p>
+            )}
+          </>
+        )}
+
+        <div className="lp-stage">
+          <div className="lp-float f1">
+            <b>+1</b> vote on <span>Iceland trip</span>
+          </div>
+          <div className="lp-float f2">🔥 Most wanted</div>
+          <div className="lp-float f3">✓ Out now: Lisbon in 48h</div>
+
+          <div className="phone" style={themeVars("sage")} aria-label="Example creator page">
+            <div className="phone-hero">
+              <div className="phone-photo">M</div>
+              <div className="phone-fade" />
             </div>
-            <div className="preview-body">
-              <div className="preview-head">
-                <div className="avatar" style={{ width: 40, height: 40, fontSize: 17, background: "var(--grad)" }}>
-                  M
-                </div>
-                <div className="grow">
-                  <h3>Maya Travels</h3>
-                  <span className="muted small">What should I make next?</span>
-                </div>
-                <PlatformBadge platform="youtube" />
+            <div className="phone-body">
+              <strong>Maya Travels</strong>
+              <span>@demo · 128K subscribers</span>
+              <div className="phone-icons">
+                <i />
+                <i />
+                <i />
               </div>
-              {PREVIEW.map((p, i) => (
-                <div key={p.title} className="preview-row">
-                  <span className="rank">#{i + 1}</span>
-                  <div className="grow">
-                    <span className={`pill ${p.cls}`}>{p.status}</span>
-                    <h3>{p.title}</h3>
+              <div className="phone-label">Vote on what&apos;s next</div>
+              {MOCK.map((m) => (
+                <div key={m.title} className="phone-card">
+                  <div>
+                    <em>{m.status}</em>
+                    <b>{m.title}</b>
                   </div>
-                  <span className={`vote ${p.on ? "on" : ""}`}>
-                    <span className="arrow">▲</span>
-                    <span className="count">{p.votes}</span>
+                  <span className={m.on ? "on" : ""}>
+                    ▲<br />
+                    {m.votes}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="preview-cta">
-            <Link href="/@demo" className="btn small">
-              See the live demo →
-            </Link>
+        </div>
+      </section>
+
+      {creators.length > 0 && (
+        <section className="lp-section">
+          <div className="lp-section-head">
+            <h2>
+              Creators on <em>NextUp</em>
+            </h2>
+            <Link href="/explore">See all →</Link>
+          </div>
+          <div className="lp-row">
+            {creators.map((c) => (
+              <CreatorCard key={c.id} c={c} />
+            ))}
           </div>
         </section>
+      )}
 
-        <ol className="steps">
+      <section className="lp-section">
+        <h2 className="lp-center">
+          Three steps. <em>Zero guessing.</em>
+        </h2>
+        <ol className="lp-steps">
           <li>
-            <span className="step-num">1</span>
+            <span>01</span>
             <strong>Plan</strong>
-            <span>Add the videos, reels and series you're thinking about.</span>
+            <p>Add the videos, reels and series you&apos;re thinking about, from rough idea to filming.</p>
           </li>
           <li>
-            <span className="step-num">2</span>
+            <span>02</span>
             <strong>Share</strong>
-            <span>Drop your timeline link in your bio or video description.</span>
+            <p>Put your NextUp link in your bio or video description. Fans vote with one tap.</p>
           </li>
           <li>
-            <span className="step-num">3</span>
+            <span>03</span>
             <strong>Create</strong>
-            <span>Make the top pick, then link it so fans see it's out.</span>
+            <p>Make the top pick, then mark it out now so fans see their vote paid off.</p>
           </li>
         </ol>
+      </section>
 
-        <footer className="site-footer">
-          <span>© NextUp</span>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
-        </footer>
-      </main>
-    </>
+      {!creator && (
+        <section className="lp-final">
+          <h2>
+            Your audience already has opinions.
+            <em>Let them vote.</em>
+          </h2>
+          <ClaimForm id="claim-bottom" />
+        </section>
+      )}
+
+      <footer className="lp-foot">
+        <span>© NextUp</span>
+        <Link href="/explore">Explore</Link>
+        <Link href="/privacy">Privacy</Link>
+        <Link href="/terms">Terms</Link>
+      </footer>
+    </div>
   );
 }

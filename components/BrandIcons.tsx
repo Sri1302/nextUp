@@ -37,3 +37,45 @@ export function GoogleIcon({ size = 18 }: { size?: number }) {
     </svg>
   );
 }
+
+// Single-colour icons (inherit currentColor) for the round icon buttons on creator pages.
+export function MonoIcon({ name, size = 20 }: { name: "youtube" | "instagram" | "share" | "explore" | "check"; size?: number }) {
+  const common = { width: size, height: size, viewBox: "0 0 24 24", "aria-hidden": true } as const;
+  switch (name) {
+    case "youtube":
+      return (
+        <svg {...common} fill="currentColor">
+          <path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.7 15.1V8.9l5.8 3.1-5.8 3.1z" />
+        </svg>
+      );
+    case "instagram":
+      return (
+        <svg {...common} fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "share":
+      return (
+        <svg {...common} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+          <path d="M16 6l-4-4-4 4" />
+          <path d="M12 2v13" />
+        </svg>
+      );
+    case "explore":
+      return (
+        <svg {...common} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M15.5 8.5l-2 5-5 2 2-5z" />
+        </svg>
+      );
+    case "check":
+      return (
+        <svg {...common} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12.5l4.5 4.5L19 7.5" />
+        </svg>
+      );
+  }
+}

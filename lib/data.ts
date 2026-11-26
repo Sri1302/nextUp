@@ -98,7 +98,7 @@ export async function getCreatorByHandle(handle: string): Promise<Creator | unde
 
 export type CreatorListing = Pick<
   Creator,
-  "id" | "handle" | "name" | "platform" | "avatarUrl" | "followerCount" | "bio" | "categories"
+  "id" | "handle" | "name" | "platform" | "avatarUrl" | "followerCount" | "bio" | "categories" | "theme"
 > & { itemCount: number; voteCount: number };
 
 // Creators with something on their timeline, most-voted first. Optional search by name or handle,
@@ -117,6 +117,7 @@ export async function listCreators(search = "", category?: Category, limit = 48)
       followerCount: creators.followerCount,
       bio: creators.bio,
       categories: creators.categories,
+      theme: creators.theme,
       itemCount: sql<number>`count(distinct ${items.id})::int`,
       voteCount,
     })
@@ -202,7 +203,7 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
 
 export async function updateCreator(
   creatorId: string,
-  patch: Pick<Creator, "handle" | "name" | "platform" | "channelUrl" | "bio" | "categories">,
+  patch: Pick<Creator, "handle" | "name" | "platform" | "channelUrl" | "bio" | "categories" | "theme">,
 ) {
   const err = handleError(patch.handle);
   if (err) return err;

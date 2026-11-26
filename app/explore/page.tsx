@@ -2,10 +2,8 @@ import Link from "next/link";
 import { signOut } from "@/app/actions";
 import * as data from "@/lib/data";
 import { getCurrentUser } from "@/lib/auth/session";
-import Avatar from "@/components/Avatar";
-import { CategoryTags, Followers, PlatformBadge } from "@/components/Bits";
+import CreatorCard from "@/components/CreatorCard";
 import { CATEGORIES, CATEGORY_KEYS, isCategory, type Category } from "@/lib/types";
-import SiteNav from "@/components/SiteNav";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -29,46 +27,55 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
   };
 
   return (
-    <>
-      <SiteNav>
-        {creator ? (
-          <Link href="/dashboard" className="btn primary small">
-            Dashboard
-          </Link>
-        ) : viewer ? (
-          <form action={signOut}>
-            <input type="hidden" name="returnTo" value="/explore" />
-            <span className="viewer-chip hide-sm">{viewer.name.split(" ")[0]}</span>
-            <button className="btn small">Sign out</button>
-          </form>
-        ) : (
-          <a href="/auth/google?intent=fan&returnTo=%2Fexplore" className="btn primary small">
-            Sign in to vote
-          </a>
-        )}
-      </SiteNav>
+    <div className="lp">
+      <header className="lp-nav">
+        <Link href="/" className="lp-logo">
+          <span className="logo-mark" aria-hidden>
+            ▲
+          </span>
+          NextUp
+        </Link>
+        <nav>
+          {creator ? (
+            <Link href="/dashboard" className="lp-pill">
+              Dashboard
+            </Link>
+          ) : viewer ? (
+            <form action={signOut}>
+              <input type="hidden" name="returnTo" value="/explore" />
+              <button className="lp-link">Sign out</button>
+            </form>
+          ) : (
+            <a href="/auth/google?intent=fan&returnTo=%2Fexplore" className="lp-pill">
+              Sign in to vote
+            </a>
+          )}
+        </nav>
+      </header>
 
-      <main className="page">
-        <header className="explore-head">
-          <h1>Explore creators</h1>
-          <p className="muted">
+      <main className="lp-explore">
+        <header className="lp-explore-head">
+          <h1>
+            Explore <em>creators</em>
+          </h1>
+          <p>
             {viewer ? `Hi ${viewer.name.split(" ")[0] || "there"} 👋 ` : ""}Pick a creator and vote on what they make next.
           </p>
-          <form className="search" action="/explore" role="search">
-            <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+          <form className="lp-search" action="/explore" role="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
             {cat && <input type="hidden" name="cat" value={cat} />}
             <input name="q" defaultValue={q} placeholder="Search by name or @handle" aria-label="Search creators" />
-            <button className="btn primary">Search</button>
+            <button>Search</button>
           </form>
-          <nav className="filter-row" aria-label="Filter by category">
-            <Link href={href()} className={`filter ${!cat ? "on" : ""}`}>
+          <nav className="lp-filters" aria-label="Filter by category">
+            <Link href={href()} className={!cat ? "on" : ""}>
               All
             </Link>
             {CATEGORY_KEYS.map((c) => (
-              <Link key={c} href={href(c)} className={`filter ${cat === c ? "on" : ""}`}>
+              <Link key={c} href={href(c)} className={cat === c ? "on" : ""}>
                 {CATEGORIES[c].emoji} {CATEGORIES[c].label}
               </Link>
             ))}
@@ -76,45 +83,28 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
         </header>
 
         {list.length === 0 ? (
-          <p className="empty">
+          <p className="lp-empty">
             {q || cat ? (
               <>
-                No creators match{q ? ` "${q}"` : ""}{cat ? ` in ${CATEGORIES[cat].label}` : ""}. <Link href="/explore">Show all</Link>
+                No creators match{q ? ` "${q}"` : ""}
+                {cat ? ` in ${CATEGORIES[cat].label}` : ""}. <Link href="/explore">Show all</Link>
               </>
             ) : (
               "No creators yet. Check back soon!"
             )}
           </p>
         ) : (
-          <ul className="creator-grid">
+          <div className="lp-grid">
             {list.map((c) => (
-              <li key={c.id}>
-                <Link href={`/@${c.handle}`} className="card creator-card">
-                  <Avatar name={c.name} handle={c.handle} url={c.avatarUrl} size={52} />
-                  <div className="grow">
-                    <h3>{c.name}</h3>
-                    <div className="row wrap gap-sm">
-                      <span className="muted small">@{c.handle}</span>
-                      <PlatformBadge platform={c.platform} />
-                    </div>
-                    <CategoryTags categories={c.categories} />
-                    {c.bio && <p className="muted small clamp">{c.bio}</p>}
-                    <div className="creator-meta">
-                      <Followers count={c.followerCount} platform={c.platform} />
-                      <span>💡 {c.itemCount} {c.itemCount === 1 ? "idea" : "ideas"}</span>
-                      <span>▲ {c.voteCount} votes</span>
-                    </div>
-                  </div>
-                </Link>
-              </li>
+              <CreatorCard key={c.id} c={c} />
             ))}
-          </ul>
+          </div>
         )}
 
-        <footer className="site-footer">
-          <Link href="/">Are you a creator? Start your timeline →</Link>
+        <footer className="lp-foot">
+          <Link href="/">Are you a creator? Claim your page →</Link>
         </footer>
       </main>
-    </>
+    </div>
   );
 }

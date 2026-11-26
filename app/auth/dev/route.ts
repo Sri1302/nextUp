@@ -23,5 +23,6 @@ export async function GET(req: NextRequest) {
     },
     intent,
     returnTo: safeReturnTo(q.get("returnTo")),
+    handle: q.get("handle") || undefined,
   });
 }

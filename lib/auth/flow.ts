@@ -11,6 +11,7 @@ export type OAuthState = {
   state: string;
   verifier: string;
   intent: Intent;
+  handle?: string; // handle typed into "claim your link", used for brand-new creators
   returnTo: string;
 };
 
@@ -28,14 +29,14 @@ export function appOrigin(req: NextRequest) {
 // Shared tail of every sign-in: user, session, creator profile, then where to go next.
 export async function finishSignIn(
   req: NextRequest,
-  o: { identity: OAuthIdentity; creator: CreatorProfile; intent: Intent; returnTo: string },
+  o: { identity: OAuthIdentity; creator: CreatorProfile; intent: Intent; returnTo: string; handle?: string },
 ) {
   const userId = await upsertOAuthUser(o.identity);
   await createSession(userId);
 
   let dest = o.returnTo;
   if (o.intent === "creator") {
-    const { isNew } = await ensureCreator(userId, o.creator);
+    const { isNew } = await ensureCreator(userId, o.handle ? { ...o.creator, suggestedHandle: o.handle } : o.creator);
     dest = isNew ? "/dashboard?welcome=1" : "/dashboard";
   }
   const res = NextResponse.redirect(new URL(dest, appOrigin(req)));
