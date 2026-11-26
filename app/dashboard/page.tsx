@@ -5,6 +5,8 @@ import { addItem, signOut } from "@/app/actions";
 import * as data from "@/lib/data";
 import { getCurrentUser } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
+import { themeKey, themeVars } from "@/lib/format";
+import ConnectYouTube from "@/components/ConnectYouTube";
 import Avatar from "@/components/Avatar";
 import { CategoryTags, Followers, PlatformBadge } from "@/components/Bits";
 import ItemEditor from "@/components/ItemEditor";
@@ -31,6 +33,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const h = await headers();
   const origin = appUrl() || `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
   const shareUrl = `${origin}/@${me.handle}`;
+  const ytConnected = me.channelUrl.includes("youtube.com") && me.followerCount != null;
+  const showConnect = me.platform !== "instagram" && !ytConnected;
 
   return (
     <>
@@ -50,7 +54,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </p>
       )}
 
-      <section className="card creator-head">
+      <section className="card creator-head" style={themeVars(themeKey(me))}>
+        <div className="dh-cover" style={me.avatarUrl ? { backgroundImage: `url("${me.avatarUrl}")` } : undefined} aria-hidden />
         <div className="creator-head-top">
           <div className="avatar-ring">
             <Avatar name={me.name} handle={me.handle} url={me.avatarUrl} size={64} />
@@ -68,6 +73,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </div>
         <ShareBar url={shareUrl} path={`/@${me.handle}`} />
       </section>
+
+      {showConnect && <ConnectYouTube connectedUrl={me.channelUrl || undefined} />}
 
       {me.categories.length === 0 && (
         <p className="banner">

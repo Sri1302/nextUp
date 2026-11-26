@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import * as data from "@/lib/data";
 import { safeReturnTo } from "@/lib/auth/flow";
 import { destroySession, getCurrentUser } from "@/lib/auth/session";
+import { lookupChannel, parseChannelInput, youtubeLookupEnabled } from "@/lib/youtube";
 import { MAX_CATEGORIES, PLATFORMS, STATUSES, isCategory, isTheme, type Platform, type Status } from "@/lib/types";
 
 function str(fd: FormData, key: string, max = 500) {
@@ -94,6 +95,32 @@ export async function updateProfile(_prev: string | null, fd: FormData): Promise
   });
   if (!err) refresh();
   return err ?? "saved";
+}
+
+export async function connectYouTube(_prev: string | null, fd: FormData): Promise<string | null> {
+  const creator = await requireCreator();
+  const input = str(fd, "channel", 200);
+  const parsed = parseChannelInput(input);
+  if (!parsed) return "Paste your channel link or @handle, for example @yourchannel";
+
+  if (!youtubeLookupEnabled()) {
+    const url = "id" in parsed ? `https://www.youtube.com/channel/${parsed.id}` : `https://www.youtube.com/${parsed.forHandle}`;
+    const err = await data.linkYouTubeChannel(creator.id, { url });
+    if (!err) refresh();
+    return err ?? "linked";
+  }
+
+  let ch;
+  try {
+    ch = await lookupChannel(input);
+  } catch (e) {
+    console.error(e);
+    return "Couldn't reach YouTube right now. Try again in a minute.";
+  }
+  if (!ch) return "We couldn't find that channel. Check the @handle and try again.";
+  const err = await data.linkYouTubeChannel(creator.id, ch);
+  if (!err) refresh();
+  return err ?? "connected";
 }
 
 // ---- timeline items ----

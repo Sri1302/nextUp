@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
       avatarUrl: "",
       followerCount: null,
       categories: [],
+      fromChannel: false,
     },
     intent,
     returnTo: safeReturnTo(q.get("returnTo")),

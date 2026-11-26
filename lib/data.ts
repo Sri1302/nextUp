@@ -159,6 +159,7 @@ export type CreatorProfile = {
   avatarUrl: string;
   followerCount: number | null;
   categories: Category[];
+  fromChannel: boolean; // true when the data is the channel itself (Instagram), not just the Google account
 };
 
 // Creates the creator profile on first sign-in, or refreshes the platform data on later ones.
@@ -169,7 +170,8 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
     await db
       .update(creators)
       .set({
-        avatarUrl: p.avatarUrl || current.avatarUrl,
+        // A Google account photo never replaces a channel photo; Instagram refreshes (its photo URLs expire).
+        avatarUrl: p.fromChannel ? p.avatarUrl || current.avatarUrl : current.avatarUrl || p.avatarUrl,
         followerCount: p.followerCount ?? current.followerCount,
         channelUrl: current.channelUrl || p.channelUrl,
         categories: current.categories.length ? current.categories : p.categories,
@@ -199,6 +201,33 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
     if (raced) return { creator: raced, isNew: false };
   }
   throw new Error("Could not create creator profile");
+}
+
+// Links a public YouTube channel to a creator page. One channel can only be on one page.
+export async function linkYouTubeChannel(
+  creatorId: string,
+  ch: { url: string; name?: string; avatarUrl?: string; followerCount?: number | null; categories?: Category[] },
+) {
+  const db = await getDb();
+  const [taken] = await db
+    .select({ id: creators.id })
+    .from(creators)
+    .where(and(eq(creators.channelUrl, ch.url), ne(creators.id, creatorId)))
+    .limit(1);
+  if (taken) return "That channel is already connected to another NextUp page.";
+  const [current] = await db.select().from(creators).where(eq(creators.id, creatorId)).limit(1);
+  await db
+    .update(creators)
+    .set({
+      platform: "youtube",
+      channelUrl: ch.url,
+      ...(ch.name ? { name: ch.name.slice(0, 60) } : {}),
+      ...(ch.avatarUrl ? { avatarUrl: ch.avatarUrl } : {}),
+      ...(ch.followerCount !== undefined ? { followerCount: ch.followerCount } : {}),
+      ...(ch.categories?.length && !current?.categories.length ? { categories: ch.categories } : {}),
+    })
+    .where(eq(creators.id, creatorId));
+  return null;
 }
 
 export async function updateCreator(

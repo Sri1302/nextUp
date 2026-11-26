@@ -17,10 +17,11 @@ const MESSAGES: Record<string, string> = {
   not_configured: "This sign-in option isn't set up yet.",
 };
 
+// Illustrative example page on the homepage (fictional creator; photo: Webvilla on Unsplash, Unsplash License).
 const MOCK = [
-  { title: "Solo trip to Iceland in winter", status: "Planned", votes: 57, on: true },
-  { title: "Japan on $50 a day", status: "Filming now", votes: 48, on: false },
-  { title: "My full travel camera kit", status: "Idea", votes: 22, on: false },
+  { title: "Hyderabadi dum biryani at home", status: "Planned · Dec", votes: 184, on: true },
+  { title: "5 breakfasts under ₹50", status: "Filming now", votes: 142, on: false },
+  { title: "Rating every Irani café in town", status: "Idea", votes: 97, on: false },
 ];
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -106,19 +107,20 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
 
         <div className="lp-stage">
           <div className="lp-float f1">
-            <b>+1</b> vote on <span>Iceland trip</span>
+            <b>+1</b> vote on <span>dum biryani</span>
           </div>
           <div className="lp-float f2">🔥 Most wanted</div>
-          <div className="lp-float f3">✓ Out now: Lisbon in 48h</div>
+          <div className="lp-float f3">✓ Out now: Mango lassi 3 ways</div>
 
-          <div className="phone" style={themeVars("sage")} aria-label="Example creator page">
+          <div className="phone" style={themeVars("sand")} aria-label="Example creator page">
             <div className="phone-hero">
-              <div className="phone-photo">M</div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="phone-photo" src="/example/kitchen.jpg" alt="" />
               <div className="phone-fade" />
             </div>
             <div className="phone-body">
-              <strong>Maya Travels</strong>
-              <span>@demo · 128K subscribers</span>
+              <strong>Kavya&apos;s Kitchen</strong>
+              <span>@kavyaskitchen · 412K subscribers</span>
               <div className="phone-icons">
                 <i />
                 <i />
@@ -139,6 +141,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
               ))}
             </div>
           </div>
+          <p className="lp-caption">Example page</p>
         </div>
       </section>
 

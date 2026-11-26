@@ -90,7 +90,9 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
                 {cat ? ` in ${CATEGORIES[cat].label}` : ""}. <Link href="/explore">Show all</Link>
               </>
             ) : (
-              "No creators yet. Check back soon!"
+              <>
+                Be one of the first creators on NextUp. <Link href="/">Claim your page →</Link>
+              </>
             )}
           </p>
         ) : (

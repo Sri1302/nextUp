@@ -1,6 +1,5 @@
 import crypto from "node:crypto";
 import { env } from "../env";
-import { categoriesFromYouTubeTopics } from "../categories";
 import type { CreatorProfile, OAuthIdentity } from "../data";
 import type { Provider } from "../types";
 
@@ -35,7 +34,6 @@ export function redirectUri(origin: string, provider: Provider) {
 export function authorizeUrl(provider: Provider, o: { origin: string; state: string; verifier: string; intent: Intent }) {
   if (provider === "google") {
     const scopes = ["openid", "email", "profile"];
-    if (o.intent === "creator") scopes.push("https://www.googleapis.com/auth/youtube.readonly");
     const u = new URL("https://accounts.google.com/o/oauth2/v2/auth");
     u.search = new URLSearchParams({
       client_id: config.google.id!,
@@ -110,44 +108,11 @@ async function google(o: { origin: string; code: string; verifier: string; inten
     platform: "youtube",
     suggestedHandle: me.name ?? "",
     channelUrl: "",
-    avatarUrl: me.picture ?? "",
+    avatarUrl: (me.picture ?? "").replace(/=s\d+-c$/, "=s800-c"),
     followerCount: null,
     categories: [],
+    fromChannel: false,
   };
-
-  if (o.intent === "creator") {
-    // The user may untick the YouTube permission; fall back to the Google profile then.
-    try {
-      const res = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&mine=true", {
-        headers: auth,
-      });
-      if (res.ok) {
-        const data = (await res.json()) as {
-          items?: {
-            id: string;
-            snippet: { title: string; customUrl?: string; thumbnails?: { high?: { url: string }; medium?: { url: string }; default?: { url: string } } };
-            statistics?: { subscriberCount?: string; hiddenSubscriberCount?: boolean };
-            topicDetails?: { topicCategories?: string[] };
-          }[];
-        };
-        const ch = data.items?.[0];
-        if (ch) {
-          creator.name = ch.snippet.title;
-          creator.suggestedHandle = ch.snippet.customUrl ?? ch.snippet.title;
-          creator.channelUrl = ch.snippet.customUrl
-            ? `https://www.youtube.com/${ch.snippet.customUrl}`
-            : `https://www.youtube.com/channel/${ch.id}`;
-          const th = ch.snippet.thumbnails;
-          creator.avatarUrl = th?.high?.url ?? th?.medium?.url ?? th?.default?.url ?? creator.avatarUrl;
-          const subs = Number(ch.statistics?.subscriberCount);
-          creator.followerCount = ch.statistics?.hiddenSubscriberCount || !Number.isFinite(subs) ? null : subs;
-          creator.categories = categoriesFromYouTubeTopics(ch.topicDetails?.topicCategories);
-        }
-      }
-    } catch (err) {
-      console.warn("YouTube channel lookup failed", err);
-    }
-  }
 
   return { identity, creator };
 }
@@ -200,6 +165,7 @@ async function instagram(o: { origin: string; code: string }): Promise<OAuthResu
       channelUrl: `https://www.instagram.com/${me.username}/`,
       avatarUrl: me.profile_picture_url ?? "",
       followerCount: me.followers_count ?? null,
+      fromChannel: true,
       categories: [], // Instagram doesn't expose a niche; creators pick it themselves
     },
   };

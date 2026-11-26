@@ -665,3 +665,24 @@ a.cp-out:hover { transform: translateY(-2px); text-decoration: none; }
   .claim-short { display: inline; }
   .lp-float.f3 { bottom: -18px; right: 8px; }
 }
+
+/* connect YouTube (dashboard) */
+.connect-yt { border-color: color-mix(in srgb, #ff0033 25%, var(--border)); }
+.connect-logo { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: color-mix(in srgb, #ff0033 10%, var(--surface)); flex-shrink: 0; }
+.connect-row { display: flex; gap: 8px; }
+.connect-row input { flex: 1; min-width: 0; }
+@media (max-width: 480px) { .connect-row { flex-direction: column; } }
+
+/* dashboard header: creator's own page colour + blurred photo banner */
+.creator-head { padding-top: 0; }
+.creator-head::before { display: none; }
+.dh-cover { height: 92px; margin: 0 -22px 0; background: var(--cp-bg) center / cover; position: relative; }
+.dh-cover[style*="url"] { filter: blur(18px) saturate(1.2); transform: scale(1.2); }
+.creator-head { overflow: hidden; }
+.creator-head-top { position: relative; margin-top: -40px; }
+.creator-head .avatar-ring { background: var(--surface); padding: 4px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
+.creator-head .avatar-ring .avatar { border: none; }
+.creator-head-top .grow { padding-top: 34px; }
+img.phone-photo { object-fit: cover; display: block; }
+.lp-stage { flex-direction: column; align-items: center; }
+.lp-caption { margin-top: 14px; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--lp-muted); }
