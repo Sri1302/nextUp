@@ -3,6 +3,7 @@ import { signOut } from "@/app/actions";
 import * as data from "@/lib/data";
 import { getCurrentUser } from "@/lib/auth/session";
 import CreatorCard from "@/components/CreatorCard";
+import LpNav from "@/components/LpNav";
 import { CATEGORIES, CATEGORY_KEYS, isCategory, type Category } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -28,30 +29,26 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
 
   return (
     <div className="lp">
-      <header className="lp-nav">
-        <Link href="/" className="lp-logo">
-          <span className="logo-mark" aria-hidden>
-            ▲
-          </span>
-          NextUp
+      <LpNav>
+        <Link href="/" className="lp-link hide-sm">
+          Home
         </Link>
-        <nav>
-          {creator ? (
-            <Link href="/dashboard" className="lp-pill">
-              Dashboard
-            </Link>
-          ) : viewer ? (
-            <form action={signOut}>
-              <input type="hidden" name="returnTo" value="/explore" />
-              <button className="lp-link">Sign out</button>
-            </form>
-          ) : (
-            <a href="/auth/google?intent=fan&returnTo=%2Fexplore" className="lp-pill">
-              Sign in to vote
-            </a>
-          )}
-        </nav>
-      </header>
+        <span className="hb-divider hide-sm" aria-hidden />
+        {creator ? (
+          <Link href="/dashboard" className="lp-pill">
+            Dashboard
+          </Link>
+        ) : viewer ? (
+          <form action={signOut}>
+            <input type="hidden" name="returnTo" value="/explore" />
+            <button className="lp-link">Sign out</button>
+          </form>
+        ) : (
+          <a href="/auth/google?intent=fan&returnTo=%2Fexplore" className="lp-pill">
+            Sign in to vote
+          </a>
+        )}
+      </LpNav>
 
       <main className="lp-explore">
         <header className="lp-explore-head">

@@ -4,14 +4,14 @@ import { useState } from "react";
 import { THEMES, THEME_KEYS, type ThemeKey } from "@/lib/types";
 import { themeVars } from "@/lib/format";
 
-const FORM_ID = "claim-main";
+const FORM_ID = "claim-builder";
 const PLACEHOLDERS = ["e.g. My desk setup tour", "e.g. 24 hours in a new city", "e.g. Answering your questions"];
 
 const cleanHandle = (s: string) => s.trim().replace(/^@/, "").toLowerCase().replace(/[^a-z0-9._]/g, "").slice(0, 30);
 
 // Homepage hero: claim a handle, and see your own page take shape as you type.
 // The handle, colour and ideas are sent along with sign-in, so the page is ready when you land.
-export default function PageBuilder() {
+export default function PageBuilder({ compact = false }: { compact?: boolean }) {
   const [handle, setHandle] = useState("");
   const [theme, setTheme] = useState<ThemeKey>("lilac");
   const [ideas, setIdeas] = useState(["", "", ""]);
@@ -22,7 +22,7 @@ export default function PageBuilder() {
   const filled = ideas.filter((i) => i.trim()).length;
 
   return (
-    <div className="builder">
+    <div className={`builder ${compact ? "compact" : ""}`}>
       <form className="claim" action="/auth/google" method="get" id={FORM_ID}>
         <input type="hidden" name="intent" value="creator" />
         <input type="hidden" name="theme" value={theme} />
@@ -49,6 +49,7 @@ export default function PageBuilder() {
       </form>
 
       <div className="builder-stage">
+        {!compact && (
         <div className="builder-steps" aria-hidden>
           <p className={h ? "done" : ""}>
             <b>1</b> Type your handle
@@ -60,6 +61,7 @@ export default function PageBuilder() {
             <b>3</b> Pick a colour, then claim it
           </p>
         </div>
+        )}
 
         <div className="phone" style={themeVars(theme)} aria-label="Live preview of your NextUp page">
           <div className="phone-hero">

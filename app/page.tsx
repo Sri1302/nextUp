@@ -2,10 +2,12 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
 import { countCreators, getCreatorByUserId, listCreators } from "@/lib/data";
 import { isConfigured } from "@/lib/auth/oauth";
+import { CATEGORIES, CATEGORY_KEYS } from "@/lib/types";
 import ClaimForm from "@/components/ClaimForm";
-import PageBuilder from "@/components/PageBuilder";
 import CreatorCard from "@/components/CreatorCard";
-import { InstagramIcon, YouTubeIcon } from "@/components/BrandIcons";
+import LpNav from "@/components/LpNav";
+import PageBuilder from "@/components/PageBuilder";
+import { InstagramIcon, MonoIcon, YouTubeIcon } from "@/components/BrandIcons";
 
 export const dynamic = "force-dynamic";
 export const metadata = { alternates: { canonical: "/" } };
@@ -17,149 +19,246 @@ const MESSAGES: Record<string, string> = {
   not_configured: "This sign-in option isn't set up yet.",
 };
 
-
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const q = await searchParams;
   const user = await getCurrentUser();
   const creator = user && (await getCreatorByUserId(user.id));
   const error = q.error && (MESSAGES[q.error] ?? MESSAGES.signin_failed);
-  const [liveCount, creators] = await Promise.all([countCreators(), listCreators("", undefined, 8)]);
+  const [liveCount, creators] = await Promise.all([countCreators(), listCreators("", undefined, 12)]);
   const instagram = isConfigured("instagram") || process.env.NODE_ENV === "development";
 
   return (
     <div className="lp">
-      <header className="lp-nav">
-        <Link href="/" className="lp-logo">
-          <span className="logo-mark" aria-hidden>
-            ▲
-          </span>
-          NextUp
+      <LpNav>
+        <Link href="/explore" className="lp-link hide-sm">
+          Explore
         </Link>
-        <nav>
-          {liveCount > 0 && (
-            <Link href="/explore" className="lp-live" title="Creators who already have a NextUp page">
-              <span className="live-dot" aria-hidden />
-              {liveCount} {liveCount === 1 ? "creator" : "creators"} on NextUp
-            </Link>
-          )}
-          <Link href="/explore" className="lp-link">
-            Explore
-          </Link>
-          {creator ? (
-            <Link href="/dashboard" className="lp-pill">
-              Dashboard
-            </Link>
-          ) : (
-            <a href="/auth/google?intent=creator" className="lp-pill">
-              Log in
-            </a>
-          )}
-        </nav>
-      </header>
-
-      <section className="lp-hero">
-        <div className="lp-glow" aria-hidden />
-        <p className="lp-eyebrow">For YouTube &amp; Instagram creators</p>
-        <h1>
-          Your fans pick
-          <em>what you make next</em>
-        </h1>
-        <p className="lp-lead">One link for your bio. Fans upvote the videos you&apos;re planning, and you make what they actually want.</p>
-
-        {error && <p className="lp-error">{error}</p>}
-        {q.deleted && <p className="lp-note">Your account has been deleted.</p>}
-
+        <a href="#how" className="lp-link hide-sm">
+          How it works
+        </a>
+        <span className="hb-divider hide-sm" aria-hidden />
         {creator ? (
-          <div className="lp-signed">
-            <Link href="/dashboard" className="claim-btn solo">
-              Open your dashboard <span aria-hidden>→</span>
-            </Link>
-            <Link href={`/@${creator.handle}`} className="lp-link">
-              View your page ↗
-            </Link>
-          </div>
+          <Link href="/dashboard" className="lp-pill">
+            Dashboard
+          </Link>
         ) : (
           <>
-            <PageBuilder />
-            <p className="lp-or">
-              or continue with{" "}
-              <a href="/auth/google?intent=creator">
-                <YouTubeIcon size={12} /> YouTube
-              </a>
-              {instagram && (
-                <>
-                  {" "}
-                  ·{" "}
-                  <a href="/auth/instagram?intent=creator">
-                    <InstagramIcon size={14} /> Instagram
-                  </a>
-                </>
-              )}
-              {user && (
-                <>
-                  {" "}
-                  · Here to vote? <Link href="/explore">Explore creators →</Link>
-                </>
-              )}
-            </p>
+            <a href="/auth/google?intent=creator" className="lp-link">
+              Log in
+            </a>
+            <a href="#claim" className="lp-pill hide-sm">
+              Claim your page
+            </a>
           </>
         )}
+      </LpNav>
+
+      {/* Hero photo: Gonzalo Poblete on Unsplash (Unsplash License). */}
+      <section className="hb-hero" id="claim">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="hb-hero-bg" src="/img/hero.jpg" alt="" />
+        <div className="hb-hero-shade" />
+        <div className="hb-hero-inner">
+          <h1>
+            Your fans pick
+            <em>what you make next.</em>
+          </h1>
+          <p className="hb-lead">One link for your bio. Fans upvote the videos you&apos;re planning, and you make what they actually want.</p>
+
+          {error && <p className="lp-error">{error}</p>}
+          {q.deleted && <p className="lp-note">Your account has been deleted.</p>}
+
+          {creator ? (
+            <div className="lp-signed">
+              <Link href="/dashboard" className="claim-btn solo">
+                Open your dashboard <span aria-hidden>→</span>
+              </Link>
+              <Link href={`/@${creator.handle}`} className="lp-link">
+                View your page ↗
+              </Link>
+            </div>
+          ) : (
+            <>
+              <ClaimForm />
+              <p className="lp-or">
+                or continue with{" "}
+                <a href="/auth/google?intent=creator">
+                  <YouTubeIcon size={12} /> YouTube
+                </a>
+                {instagram && (
+                  <>
+                    {" "}
+                    ·{" "}
+                    <a href="/auth/instagram?intent=creator">
+                      <InstagramIcon size={14} /> Instagram
+                    </a>
+                  </>
+                )}
+              </p>
+            </>
+          )}
+        </div>
       </section>
 
-      {creators.length > 0 && (
-        <section className="lp-section">
-          <div className="lp-section-head">
-            <h2>
-              Creators on <em>NextUp</em>
-            </h2>
-            <Link href="/explore">See all →</Link>
-          </div>
-          <div className="lp-row">
-            {creators.map((c) => (
-              <CreatorCard key={c.id} c={c} />
+      <section className="hb-section">
+        <div className="hb-section-head">
+          <h2>
+            Creators who listen
+            <em> live here.</em>
+          </h2>
+          <p className="hb-sub">
+            {liveCount > 0 ? (
+              <>
+                <span className="live-dot" aria-hidden /> {liveCount} {liveCount === 1 ? "creator has" : "creators have"} a NextUp page
+              </>
+            ) : (
+              "NextUp just launched. Be one of the first creators here."
+            )}
+          </p>
+        </div>
+        <nav className="lp-filters" aria-label="Browse by category">
+          <Link href="/explore" className="on">
+            All
+          </Link>
+          {CATEGORY_KEYS.slice(0, 8).map((c) => (
+            <Link key={c} href={`/explore?cat=${c}`}>
+              {CATEGORIES[c].label}
+            </Link>
+          ))}
+        </nav>
+        <div className="hb-row">
+          {creators.map((c) => (
+            <CreatorCard key={c.id} c={c} />
+          ))}
+          {creators.length < 4 &&
+            Array.from({ length: 4 - creators.length }, (_, i) => (
+              <a key={i} href="#claim" className="pc pc-open">
+                <span className="pc-open-plus" aria-hidden>
+                  +
+                </span>
+                <strong>Your page here</strong>
+                <span>nextup/@yourname</span>
+              </a>
             ))}
+        </div>
+      </section>
+
+      <section className="hb-section" id="how">
+        <h2 className="hb-center">
+          All of it, <em>in one link.</em>
+        </h2>
+        <div className="hb-features">
+          <article className="hb-feature">
+            <div className="hb-art hb-art-plan" aria-hidden>
+              <div>
+                <i className="dot idea" />
+                Idea
+              </div>
+              <div>
+                <i className="dot planned" />
+                Planned
+              </div>
+              <div>
+                <i className="dot filming" />
+                Filming
+              </div>
+              <div className="on">
+                <i className="dot out" />
+                Out now
+              </div>
+            </div>
+            <h3>Plan</h3>
+            <p>Add the videos, reels and series you&apos;re thinking about, and move them from idea to out now.</p>
+          </article>
+          <article className="hb-feature">
+            <div className="hb-art hb-art-share" aria-hidden>
+              <div className="hb-link">
+                nextup/@yourname <b>Copy</b>
+              </div>
+              <div className="hb-bios">
+                <span>
+                  <MonoIcon name="youtube" size={16} /> Description
+                </span>
+                <span>
+                  <MonoIcon name="instagram" size={16} /> Bio
+                </span>
+              </div>
+            </div>
+            <h3>Share</h3>
+            <p>One link in your bio or video description. Fans open it and vote with a single tap.</p>
+          </article>
+          <article className="hb-feature">
+            <div className="hb-art hb-art-vote" aria-hidden>
+              <span className="hb-vote">
+                ▲<b>Vote</b>
+              </span>
+              <span className="hb-badge">🔥 Most wanted</span>
+            </div>
+            <h3>Create</h3>
+            <p>See what your audience wants most, make it, and mark it out now so fans see their vote paid off.</p>
+          </article>
+        </div>
+      </section>
+
+      {!creator && (
+        <section className="hb-section hb-split">
+          <div className="hb-split-text">
+            <h2>
+              See your page
+              <em> before you sign up.</em>
+            </h2>
+            <p>Type your handle and a few video ideas into the phone, pick a colour, and tap ▲ to see what your fans will do. Claim it and it&apos;s live.</p>
+            <ol>
+              <li>Type your handle</li>
+              <li>Add ideas you&apos;re planning</li>
+              <li>Pick a colour, then claim it</li>
+            </ol>
+          </div>
+          <div className="hb-split-phone">
+            <PageBuilder compact />
           </div>
         </section>
       )}
 
-      <section className="lp-section">
-        <h2 className="lp-center">
-          Three steps. <em>Zero guessing.</em>
-        </h2>
-        <ol className="lp-steps">
-          <li>
-            <span>01</span>
-            <strong>Plan</strong>
-            <p>Add the videos, reels and series you&apos;re thinking about, from rough idea to filming.</p>
-          </li>
-          <li>
-            <span>02</span>
-            <strong>Share</strong>
-            <p>Put your NextUp link in your bio or video description. Fans vote with one tap.</p>
-          </li>
-          <li>
-            <span>03</span>
-            <strong>Create</strong>
-            <p>Make the top pick, then mark it out now so fans see their vote paid off.</p>
-          </li>
-        </ol>
-      </section>
-
       {!creator && (
-        <section className="lp-final">
+        <section className="hb-final">
           <h2>
-            Your audience already has opinions.
-            <em>Let them vote.</em>
+            Be one of the first
+            <em> creators on NextUp.</em>
           </h2>
+          <p>Free. Takes a minute. We never post for you.</p>
           <ClaimForm id="claim-bottom" />
         </section>
       )}
 
-      <footer className="lp-foot">
-        <span>© NextUp</span>
-        <Link href="/explore">Explore</Link>
-        <Link href="/privacy">Privacy</Link>
-        <Link href="/terms">Terms</Link>
+      <footer className="hb-foot">
+        <div className="hb-foot-brand">
+          <Link href="/" className="lp-logo">
+            <span className="hb-mark" aria-hidden>
+              ▲
+            </span>
+            NextUp
+          </Link>
+          <p>Let your fans pick what you make next.</p>
+        </div>
+        <div className="hb-foot-cols">
+          <div>
+            <h4>Product</h4>
+            <Link href="/explore">Explore creators</Link>
+            <a href="#claim">Claim your page</a>
+            <a href="/auth/google?intent=creator">Log in</a>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
+          </div>
+          <div>
+            <h4>Contact</h4>
+            <a href="mailto:chennusri22@gmail.com">Email us</a>
+          </div>
+        </div>
+        <p className="hb-copy">© {new Date().getFullYear()} NextUp. All rights reserved.</p>
       </footer>
     </div>
   );
