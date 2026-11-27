@@ -140,7 +140,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
                   +
                 </span>
                 <strong>Your page here</strong>
-                <span>askfans.site/@yourname</span>
+                <span>askfans.online/@yourname</span>
               </a>
             ))}
         </div>
@@ -177,7 +177,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
           <article className="hb-feature">
             <div className="hb-art hb-art-share" aria-hidden>
               <div className="hb-link">
-                askfans.site/@yourname <b>Copy</b>
+                askfans.online/@yourname <b>Copy</b>
               </div>
               <div className="hb-bios">
                 <span>

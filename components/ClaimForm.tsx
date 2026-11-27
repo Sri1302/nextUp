@@ -4,7 +4,7 @@ export default function ClaimForm({ id }: { id?: string }) {
     <form className="claim" action="/auth/google" method="get" id={id}>
       <input type="hidden" name="intent" value="creator" />
       <label className="claim-field">
-        <span className="claim-prefix">askfans.site/@</span>
+        <span className="claim-prefix">askfans.online/@</span>
         <input
           name="handle"
           placeholder="yourname"

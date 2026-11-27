@@ -27,7 +27,7 @@ export default function PageBuilder({ compact = false }: { compact?: boolean }) 
         <input type="hidden" name="intent" value="creator" />
         <input type="hidden" name="theme" value={theme} />
         <label className="claim-field">
-          <span className="claim-prefix">askfans.site/@</span>
+          <span className="claim-prefix">askfans.online/@</span>
           <input
             name="handle"
             value={handle}
@@ -72,7 +72,7 @@ export default function PageBuilder({ compact = false }: { compact?: boolean }) 
           </div>
           <div className="phone-body">
             <strong className={h ? "" : "ghost"}>{name}</strong>
-            <span>askfans.site/@{name}</span>
+            <span>askfans.online/@{name}</span>
             <div className="phone-label">Vote on what&apos;s next</div>
             {ideas.map((idea, i) => (
               <div key={i} className="phone-card">
