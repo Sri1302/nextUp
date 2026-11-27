@@ -101,7 +101,7 @@ export type CreatorListing = Pick<
   "id" | "handle" | "name" | "platform" | "avatarUrl" | "followerCount" | "bio" | "categories" | "theme"
 > & { itemCount: number; voteCount: number };
 
-// Creators with something on their timeline, most-voted first. Optional search by name or handle,
+// All creators, most-voted first (new creators show up straight away, in their niche). Optional search by name or handle,
 // and an optional category filter.
 export async function listCreators(search = "", category?: Category, limit = 48): Promise<CreatorListing[]> {
   const db = await getDb();
@@ -122,7 +122,7 @@ export async function listCreators(search = "", category?: Category, limit = 48)
       voteCount,
     })
     .from(creators)
-    .innerJoin(items, eq(items.creatorId, creators.id))
+    .leftJoin(items, eq(items.creatorId, creators.id))
     .leftJoin(votes, eq(votes.itemId, items.id))
     .where(
       and(
