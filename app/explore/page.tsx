@@ -8,7 +8,7 @@ import { CATEGORIES, CATEGORY_KEYS, isCategory, type Category } from "@/lib/type
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Explore creators · NextUp",
+  title: "Explore creators · AskFans",
   description: "Find YouTube and Instagram creators and vote on what they make next.",
   alternates: { canonical: "/explore" },
 };
@@ -88,7 +88,7 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
               </>
             ) : (
               <>
-                Be one of the first creators on NextUp. <Link href="/">Claim your page →</Link>
+                Be one of the first creators on AskFans. <Link href="/">Claim your page →</Link>
               </>
             )}
           </p>

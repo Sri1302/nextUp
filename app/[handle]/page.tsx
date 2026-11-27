@@ -24,11 +24,11 @@ async function creatorFromParams(params: Props["params"]) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const creator = await creatorFromParams(params);
-  if (!creator) return { title: "Not found · NextUp" };
+  if (!creator) return { title: "Not found · AskFans" };
   const title = `What should ${creator.name} make next?`;
-  const description = creator.bio || `Vote on ${creator.name}'s upcoming content on NextUp.`;
+  const description = creator.bio || `Vote on ${creator.name}'s upcoming content on AskFans.`;
   return {
-    title: `${title} · NextUp`,
+    title: `${title} · AskFans`,
     description,
     alternates: { canonical: `/@${creator.handle}` },
     openGraph: { title, description, type: "profile", images: creator.avatarUrl ? [creator.avatarUrl] : [] },
@@ -58,11 +58,11 @@ export default async function CreatorPage({ params }: Props) {
           <HeroPhoto url={creator.avatarUrl} name={creator.name} className="cp-photo" />
           <div className="cp-fade" />
           <nav className="cp-top">
-            <Link href="/" className="cp-chip cp-logo" aria-label="NextUp home">
+            <Link href="/" className="cp-chip cp-logo" aria-label="AskFans home">
               <span className="logo-mark" aria-hidden>
                 ▲
               </span>
-              NextUp
+              AskFans
             </Link>
             {isOwner ? (
               <Link href="/dashboard" className="cp-chip">
@@ -132,7 +132,7 @@ export default async function CreatorPage({ params }: Props) {
             <span className="logo-mark" aria-hidden>
               ▲
             </span>
-            Create your NextUp
+            Create your AskFans
           </Link>
           <p>
             <Link href="/explore">Explore</Link> · <Link href="/privacy">Privacy</Link> · <Link href="/terms">Terms</Link>

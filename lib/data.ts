@@ -7,7 +7,7 @@ import type { Category, Creator, Item, ItemWithVotes, Platform, Provider } from 
 
 const RESERVED = new Set([
   "admin", "api", "app", "auth", "dashboard", "demo", "explore", "help", "login", "logout",
-  "nextup", "privacy", "settings", "signin", "signup", "support", "terms", "www",
+  "nextup", "askfans", "privacy", "settings", "signin", "signup", "support", "terms", "www",
 ]);
 
 export function normalizeHandle(raw: string) {
@@ -135,7 +135,7 @@ export async function listCreators(search = "", category?: Category, limit = 48)
     .limit(limit);
 }
 
-// Real creators on NextUp (the seeded @demo page doesn't count).
+// Real creators on AskFans (the seeded @demo page doesn't count).
 export async function countCreators() {
   const db = await getDb();
   const [{ n }] = await db
@@ -219,7 +219,7 @@ export async function linkYouTubeChannel(
     .from(creators)
     .where(and(eq(creators.channelUrl, ch.url), ne(creators.id, creatorId)))
     .limit(1);
-  if (taken) return "That channel is already connected to another NextUp page.";
+  if (taken) return "That channel is already connected to another AskFans page.";
   const [current] = await db.select().from(creators).where(eq(creators.id, creatorId)).limit(1);
   await db
     .update(creators)

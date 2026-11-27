@@ -17,7 +17,7 @@ export default function CreatorCard({ c }: { c: CreatorListing }) {
       </span>
       <div className="pc-info">
         <strong>{c.name}</strong>
-        <span className="pc-handle">nextup/@{c.handle}</span>
+        <span className="pc-handle">askfans.site/@{c.handle}</span>
         <span className="pc-stats">
           {cats.map((k) => CATEGORIES[k].emoji).join(" ")}
           {cats.length ? " · " : ""}▲ {compactNumber(c.voteCount)} votes

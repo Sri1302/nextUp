@@ -1,6 +1,6 @@
 import SiteNav from "@/components/SiteNav";
 
-export const metadata = { title: "Privacy · NextUp", alternates: { canonical: "/privacy" } };
+export const metadata = { title: "Privacy · AskFans", alternates: { canonical: "/privacy" } };
 
 // Starter policy: review with someone qualified before launch.
 export default function Privacy() {
@@ -29,7 +29,7 @@ export default function Privacy() {
 
       <h2>How we use it</h2>
       <p>
-        Only to run NextUp: to sign you in, show creator profiles and timelines, and count one vote per person. We don't
+        Only to run AskFans: to sign you in, show creator profiles and timelines, and count one vote per person. We don't
         sell your data, show ads, or post anything to your YouTube or Instagram account. We don't keep your Google or
         Instagram access tokens after sign-in.
       </p>

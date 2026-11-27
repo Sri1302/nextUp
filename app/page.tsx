@@ -112,10 +112,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
           <p className="hb-sub">
             {liveCount > 0 ? (
               <>
-                <span className="live-dot" aria-hidden /> {liveCount} {liveCount === 1 ? "creator has" : "creators have"} a NextUp page
+                <span className="live-dot" aria-hidden /> {liveCount} {liveCount === 1 ? "creator has" : "creators have"} a AskFans page
               </>
             ) : (
-              "NextUp just launched. Be one of the first creators here."
+              "AskFans just launched. Be one of the first creators here."
             )}
           </p>
         </div>
@@ -140,7 +140,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
                   +
                 </span>
                 <strong>Your page here</strong>
-                <span>nextup/@yourname</span>
+                <span>askfans.site/@yourname</span>
               </a>
             ))}
         </div>
@@ -177,7 +177,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
           <article className="hb-feature">
             <div className="hb-art hb-art-share" aria-hidden>
               <div className="hb-link">
-                nextup/@yourname <b>Copy</b>
+                askfans.site/@yourname <b>Copy</b>
               </div>
               <div className="hb-bios">
                 <span>
@@ -228,7 +228,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         <section className="hb-final">
           <h2>
             Be one of the first
-            <em> creators on NextUp.</em>
+            <em> creators on AskFans.</em>
           </h2>
           <p>Free. Takes a minute. We never post for you.</p>
           <ClaimForm id="claim-bottom" />
@@ -241,7 +241,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
             <span className="hb-mark" aria-hidden>
               ▲
             </span>
-            NextUp
+            AskFans
           </Link>
           <p>Let your fans pick what you make next.</p>
         </div>
@@ -262,7 +262,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
             <a href="mailto:chennusri22@gmail.com">Email us</a>
           </div>
         </div>
-        <p className="hb-copy">© {new Date().getFullYear()} NextUp. All rights reserved.</p>
+        <p className="hb-copy">© {new Date().getFullYear()} AskFans. All rights reserved.</p>
       </footer>
     </div>
   );

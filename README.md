@@ -1,4 +1,4 @@
-# NextUp
+# AskFans
 
 Creators share a timeline of what they plan to make; fans vote on what they want next.
 Next.js 15 (App Router) · Postgres (Neon) via Drizzle · Google + Instagram sign-in · deploys on Vercel.

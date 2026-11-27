@@ -17,7 +17,7 @@ import SubmitButton from "@/components/SubmitButton";
 import SiteNav from "@/components/SiteNav";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Dashboard · NextUp", robots: { index: false } };
+export const metadata = { title: "Dashboard · AskFans", robots: { index: false } };
 
 export default async function Dashboard({ searchParams }: { searchParams: Promise<{ welcome?: string }> }) {
   const user = await getCurrentUser();
@@ -50,7 +50,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
       {welcome && (
         <p className="banner">
-          Welcome to NextUp! Your link is <strong>/@{me.handle}</strong>. You can change it under Edit profile below.
+          Welcome to AskFans! Your link is <strong>/@{me.handle}</strong>. You can change it under Edit profile below.
         </p>
       )}
 

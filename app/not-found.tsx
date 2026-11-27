@@ -10,7 +10,7 @@ export default function NotFound() {
           🔭
         </span>
         <h1>Nothing here yet</h1>
-        <p className="muted">This creator doesn't have a NextUp timeline, or the link is wrong.</p>
+        <p className="muted">This creator doesn't have a AskFans timeline, or the link is wrong.</p>
         <div className="row center">
           <Link href="/explore" className="btn primary">
             Explore creators

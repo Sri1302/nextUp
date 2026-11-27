@@ -4,7 +4,7 @@ export default function ClaimForm({ id }: { id?: string }) {
     <form className="claim" action="/auth/google" method="get" id={id}>
       <input type="hidden" name="intent" value="creator" />
       <label className="claim-field">
-        <span className="claim-prefix">nextup/@</span>
+        <span className="claim-prefix">askfans.site/@</span>
         <input
           name="handle"
           placeholder="yourname"
@@ -14,7 +14,7 @@ export default function ClaimForm({ id }: { id?: string }) {
           maxLength={30}
           pattern="@?[A-Za-z0-9._]{3,30}"
           title="3–30 letters, numbers, dots or underscores"
-          aria-label="Choose your NextUp handle"
+          aria-label="Choose your AskFans handle"
         />
       </label>
       <button className="claim-btn">

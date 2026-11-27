@@ -5,11 +5,11 @@ export default function SiteNav({ children }: { children?: React.ReactNode }) {
   return (
     <header className="nav">
       <div className="nav-inner">
-        <Link href="/" className="logo" aria-label="NextUp home">
+        <Link href="/" className="logo" aria-label="AskFans home">
           <span className="logo-mark" aria-hidden>
             ▲
           </span>
-          NextUp
+          AskFans
         </Link>
         <nav className="nav-actions">{children}</nav>
       </div>

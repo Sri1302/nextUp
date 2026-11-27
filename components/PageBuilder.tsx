@@ -27,7 +27,7 @@ export default function PageBuilder({ compact = false }: { compact?: boolean }) 
         <input type="hidden" name="intent" value="creator" />
         <input type="hidden" name="theme" value={theme} />
         <label className="claim-field">
-          <span className="claim-prefix">nextup/@</span>
+          <span className="claim-prefix">askfans.site/@</span>
           <input
             name="handle"
             value={handle}
@@ -39,7 +39,7 @@ export default function PageBuilder({ compact = false }: { compact?: boolean }) 
             maxLength={31}
             pattern="@?[A-Za-z0-9._]{3,30}"
             title="3–30 letters, numbers, dots or underscores"
-            aria-label="Choose your NextUp handle"
+            aria-label="Choose your AskFans handle"
           />
         </label>
         <button className="claim-btn">
@@ -63,7 +63,7 @@ export default function PageBuilder({ compact = false }: { compact?: boolean }) 
         </div>
         )}
 
-        <div className="phone" style={themeVars(theme)} aria-label="Live preview of your NextUp page">
+        <div className="phone" style={themeVars(theme)} aria-label="Live preview of your AskFans page">
           <div className="phone-hero">
             <div className="phone-photo photo-fallback">
               <span>{name.charAt(0).toUpperCase()}</span>
@@ -72,7 +72,7 @@ export default function PageBuilder({ compact = false }: { compact?: boolean }) 
           </div>
           <div className="phone-body">
             <strong className={h ? "" : "ghost"}>{name}</strong>
-            <span>nextup/@{name}</span>
+            <span>askfans.site/@{name}</span>
             <div className="phone-label">Vote on what&apos;s next</div>
             {ideas.map((idea, i) => (
               <div key={i} className="phone-card">

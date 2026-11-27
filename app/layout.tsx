@@ -9,9 +9,9 @@ const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["ita
 export const metadata: Metadata = {
   // Absolute base for canonical and Open Graph URLs, so only one domain gets indexed.
   metadataBase: new URL(siteUrl()),
-  title: "NextUp: let your fans vote on what you make next",
+  title: "AskFans: let your fans vote on what you make next",
   description: "A public content roadmap for YouTube and Instagram creators.",
-  openGraph: { siteName: "NextUp", type: "website" },
+  openGraph: { siteName: "AskFans", type: "website" },
 };
 
 export const viewport: Viewport = {
