@@ -7,10 +7,14 @@ import ClaimForm from "@/components/ClaimForm";
 import CreatorCard from "@/components/CreatorCard";
 import LpNav from "@/components/LpNav";
 import PageBuilder from "@/components/PageBuilder";
+import HeroSlideshow from "@/components/HeroSlideshow";
 import { InstagramIcon, MonoIcon, YouTubeIcon } from "@/components/BrandIcons";
 
 export const dynamic = "force-dynamic";
 export const metadata = { alternates: { canonical: "/" } };
+
+// The "Creators who listen live here" row appears once this many creators have pages.
+const SHOW_CREATORS_FROM = 4;
 
 const MESSAGES: Record<string, string> = {
   denied: "Sign-in was cancelled.",
@@ -53,10 +57,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         )}
       </LpNav>
 
-      {/* Hero photo: Gonzalo Poblete on Unsplash (Unsplash License). */}
       <section className="hb-hero" id="claim">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="hb-hero-bg" src="/img/hero.jpg" alt="" />
+        <HeroSlideshow />
         <div className="hb-hero-shade" />
         <div className="hb-hero-inner">
           <h1>
@@ -100,6 +102,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         </div>
       </section>
 
+      {creators.length >= SHOW_CREATORS_FROM && (
       <section className="hb-section">
         <div className="hb-section-head">
           <h2>
@@ -142,6 +145,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
             ))}
         </div>
       </section>
+      )}
 
       <section className="hb-section" id="how">
         <h2 className="hb-center">
