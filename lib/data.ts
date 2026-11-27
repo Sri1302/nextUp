@@ -173,7 +173,7 @@ export async function ensureCreator(userId: string, p: CreatorProfile) {
         // A Google account photo never replaces a channel photo; Instagram refreshes (its photo URLs expire).
         avatarUrl: p.fromChannel ? p.avatarUrl || current.avatarUrl : current.avatarUrl || p.avatarUrl,
         followerCount: p.followerCount ?? current.followerCount,
-        channelUrl: current.channelUrl || p.channelUrl,
+        channelUrl: p.fromChannel && p.channelUrl ? p.channelUrl : current.channelUrl || p.channelUrl,
         categories: current.categories.length ? current.categories : p.categories,
       })
       .where(eq(creators.id, current.id));

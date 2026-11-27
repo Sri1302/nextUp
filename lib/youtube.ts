@@ -35,14 +35,29 @@ export async function lookupChannel(raw: string): Promise<YouTubeChannel | null>
   u.search = new URLSearchParams({ part: "snippet,statistics,topicDetails", key, ...q }).toString();
   const res = await fetch(u, { cache: "no-store" });
   if (!res.ok) throw new Error(`YouTube lookup failed: ${res.status}`);
-  const data = (await res.json()) as {
-    items?: {
-      id: string;
-      snippet: { title: string; customUrl?: string; thumbnails?: { high?: { url: string }; medium?: { url: string }; default?: { url: string } } };
-      statistics?: { subscriberCount?: string; hiddenSubscriberCount?: boolean };
-      topicDetails?: { topicCategories?: string[] };
-    }[];
-  };
+  return firstChannel(await res.json());
+}
+
+// The signed-in user's own channel (needs the youtube.readonly permission from sign-in).
+export async function fetchMyChannel(accessToken: string): Promise<YouTubeChannel | null> {
+  const res = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,topicDetails&mine=true", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: "no-store",
+  });
+  if (!res.ok) return null; // permission not granted, or no channel
+  return firstChannel(await res.json());
+}
+
+type ChannelsResponse = {
+  items?: {
+    id: string;
+    snippet: { title: string; customUrl?: string; thumbnails?: { high?: { url: string }; medium?: { url: string }; default?: { url: string } } };
+    statistics?: { subscriberCount?: string; hiddenSubscriberCount?: boolean };
+    topicDetails?: { topicCategories?: string[] };
+  }[];
+};
+
+function firstChannel(data: ChannelsResponse): YouTubeChannel | null {
   const ch = data.items?.[0];
   if (!ch) return null;
   const th = ch.snippet.thumbnails;

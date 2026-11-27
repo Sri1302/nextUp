@@ -33,7 +33,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const h = await headers();
   const origin = appUrl() || `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
   const shareUrl = `${origin}/@${me.handle}`;
-  const ytConnected = me.channelUrl.includes("youtube.com") && me.followerCount != null;
+  const ytConnected = me.channelUrl.includes("youtube.com");
   const showConnect = me.platform !== "instagram" && !ytConnected;
 
   return (
@@ -74,7 +74,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         <ShareBar url={shareUrl} path={`/@${me.handle}`} />
       </section>
 
-      {showConnect && <ConnectYouTube connectedUrl={me.channelUrl || undefined} />}
+      {showConnect && <ConnectYouTube />}
 
       {me.categories.length === 0 && (
         <p className="banner">

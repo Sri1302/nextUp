@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { fetchMyChannel } from "../youtube";
 import { env } from "../env";
 import type { CreatorProfile, OAuthIdentity } from "../data";
 import type { Provider } from "../types";
@@ -34,6 +35,8 @@ export function redirectUri(origin: string, provider: Provider) {
 export function authorizeUrl(provider: Provider, o: { origin: string; state: string; verifier: string; intent: Intent }) {
   if (provider === "google") {
     const scopes = ["openid", "email", "profile"];
+    // Creators also share read-only YouTube access so their channel fills in automatically.
+    if (o.intent === "creator") scopes.push("https://www.googleapis.com/auth/youtube.readonly");
     const u = new URL("https://accounts.google.com/o/oauth2/v2/auth");
     u.search = new URLSearchParams({
       client_id: config.google.id!,
@@ -113,6 +116,22 @@ async function google(o: { origin: string; code: string; verifier: string; inten
     categories: [],
     fromChannel: false,
   };
+
+  if (o.intent === "creator") {
+    // Skipped if the creator unticks the YouTube permission or has no channel; the dashboard then offers to connect.
+    const ch = await fetchMyChannel(token.access_token).catch(() => null);
+    if (ch) {
+      Object.assign(creator, {
+        name: ch.name,
+        suggestedHandle: ch.handle || ch.name,
+        channelUrl: ch.url,
+        avatarUrl: ch.avatarUrl || creator.avatarUrl,
+        followerCount: ch.followerCount,
+        categories: ch.categories,
+        fromChannel: true,
+      });
+    }
+  }
 
   return { identity, creator };
 }

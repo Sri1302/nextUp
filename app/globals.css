@@ -792,3 +792,9 @@ a.cp-out:hover { transform: translateY(-2px); text-decoration: none; }
 @keyframes hb-word { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .hb-slides img { transition: none; } }
 
+.connect-one { gap: 10px; }
+.connect-hint { text-align: center; margin: 8px 0 4px; }
+.connect-paste { margin-top: 10px; }
+.connect-paste summary { cursor: pointer; font-size: 0.86rem; color: var(--muted); text-align: center; list-style: none; }
+.connect-paste summary::-webkit-details-marker { display: none; }
+.connect-paste[open] summary { margin-bottom: 10px; }
